@@ -1,0 +1,141 @@
+.cart-slider {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px; /* Increased width */
+  height: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-slider.show {
+  transform: translateX(0);
+}
+
+.slider-content {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.slider-header h3 {
+  margin: 0;
+  font-size: 1.1rem; /* Smaller font size */
+}
+
+.slider-header button {
+  background: none;
+  border: none;
+  font-size: 1.1rem; /* Smaller font size */
+  cursor: pointer;
+  color: #888;
+}
+
+.slider-items {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.cart-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.item-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.item-details {
+  flex-grow: 1;
+}
+
+.item-details h4 {
+  margin: 0 0 5px 0;
+  font-size: 1rem;
+}
+
+.item-details p {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.item-details .quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.item-details .quantity-controls button {
+  background: #f7f7f7;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.item-details button {
+  background: none;
+  border: none;
+  color: #e57373;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.slider-footer {
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+.slider-footer h4 {
+  margin: 0 0 15px 0;
+  text-align: right;
+  font-size: 1.2rem;
+}
+
+.slider-footer .footer-buttons {
+  display: flex;
+  gap: 10px; /* Space between buttons */
+  justify-content: space-between; /* Distribute buttons */
+}
+
+.slider-footer .footer-buttons button {
+  flex-grow: 1; /* Allow buttons to grow and fill space */
+  text-align: center;
+  padding: 8px 16px; /* Smaller padding */
+  background-color: transparent; /* Remove background color */
+  color: #b88e2f; /* Brand color */
+  border: 1px solid #b88e2f; /* Add border */
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem; /* Smaller font size */
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.slider-footer .footer-buttons button:hover {
+  background-color: #b88e2f;
+  color: white;
+} 

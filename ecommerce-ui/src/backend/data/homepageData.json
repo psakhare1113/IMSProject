@@ -1,0 +1,34 @@
+{
+  "carouselImages": ["ho.jpg", "mo.webp", "xy.avif"],
+  "products": [
+    { "id": 1, "name": "office chair", "image": "office.webp", "price": "₹1099", "rating": 4.5 },
+    { "id": 2, "name": "cinema chair", "image": "6_3602X_110425.webp", "price": "₹1299", "rating": 4.2 },
+    { "id": 3, "name": "shoe rack", "image": "rack.webp", "price": "₹599", "rating": 4.8 },
+    { "id": 4, "name": "cupboard", "image": "wood.webp", "price": "₹4449", "rating": 4.6 }
+  ],
+  "categories": [
+    { "title": "Furniture", "image": "mo.webp" },
+    { "title": "Decor", "image": "rack.webp" },
+    { "title": "Appliances", "image": "ho.jpg" }
+  ],
+  "DifferentCat":[
+    {"title":"Furniture","image":"mo.webp"},
+    {"title":"Decor","image":"rack.webp"},
+    {"title":"Appliances","image":"ho.jpg"},
+    {"title":"Appliances","image":"ho.jpg"}
+  ],
+  "DiffImages":[
+    { "image": "mo.webp", "class": "square-small", "alt": "img1" },
+    { "image": "mo.webp", "class": "rectangle-horizontal", "alt": "img2" },
+    { "image": "mo.webp", "class": "square-big", "alt": "img3" },
+    { "image": "mo.webp", "class": "rectangle-vertical", "alt": "img4" },
+    { "image": "mo.webp", "class": "rectangle-big", "alt": "img5" },
+    { "image": "mo.webp", "class": "rectangle-small", "alt": "img6" },
+    { "image": "mo.webp", "class": "square-small", "alt": "img7" },
+    { "image": "mo.webp", "class": "rectangle-horizontal", "alt": "img8" },
+    { "image": "mo.webp", "class": "square-small", "alt": "img9" },
+    { "image": "mo.webp", "class": "rectangle-vertical", "alt": "img10" },
+    { "image": "mo.webp", "class": "rectangle-big", "alt": "img11" },
+    { "image": "mo.webp", "class": "square-big", "alt": "img12" }
+  ]
+}

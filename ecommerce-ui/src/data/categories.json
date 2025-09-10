@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Beds",
+    "image": "/images/beds.png",
+    "link": "/category/beds"
+  },
+  {
+    "id": 2,
+    "name": "Chairs",
+    "image": "/images/chairs.png",
+    "link": "/category/chairs"
+  },
+  {
+    "id": 3,
+    "name": "Dining Tables",
+    "image": "/images/dining.png",
+    "link": "/category/dining-tables"
+  },
+  {
+    "id": 4,
+    "name": "Sofas",
+    "image": "/images/sofas.png",
+    "link": "/category/sofas"
+  },
+  {
+    "id": 5,
+    "name": "TV & Media Units",
+    "image": "/images/tvmedia.png",
+    "link": "/category/tv-media"
+  },
+  {
+    "id": 6,
+    "name": "Wardrobes",
+    "image": "/images/wardoes.png",
+    "link": "/category/wardrobes"
+  },
+  {
+    "id": 7,
+    "name": "Dressing Tables",
+    "image": "/images/dressingtable.png",
+    "link": "/category/dressing-tables"
+  },
+  {
+    "id": 8,
+    "name": "Shoe Racks",
+    "image": "/images/shoeeracks.png",
+    "link": "/category/shoe-racks"
+  },
+  {
+    "id": 9,
+    "name": "Study Tables",
+    "image": "/images/studytable.png",
+    "link": "/category/study-tables"
+  },
+  {
+    "id": 10,
+    "name": "Book Shelves",
+    "image": "/images/books.png",
+    "link": "/category/book-shelves"
+  },
+  {
+    "id": 11,
+    "name": "Slide Tables",
+    "image": "/images/slidetable.png",
+    "link": "/category/slide-tables"
+  },
+  {
+    "id": 12,
+    "name": "Chest of Drawers",
+    "image": "/images/drawers.png",
+    "link": "/category/drawers"
+  }
+]

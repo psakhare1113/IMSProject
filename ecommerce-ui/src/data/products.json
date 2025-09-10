@@ -1,0 +1,302 @@
+{
+  "beds": [
+    {
+      "id": 1,
+      "name": "King Size Bed",
+      "image": "bed1.png",
+      "price": "₹25,999",
+      "mrp": "₹29,999",
+      "discount": "13% OFF",
+      "rating": 4.5,
+      "description": "Comfortable king size bed with storage",
+      "material": "Solid Wood",
+      "dimensions": "200 x 180 x 45 cm",
+      "color": "Brown",
+      "warranty": "2 Years",
+      "delivery": "Free Delivery in 7-10 days"
+    },
+    {
+      "id": 2,
+      "name": "Queen Size Bed",
+      "image": "bed2.png",
+      "price": "₹18,999",
+      "mrp": "₹22,999",
+      "discount": "17% OFF",
+      "rating": 4.3,
+      "description": "Elegant queen size bed",
+      "material": "Engineered Wood",
+      "dimensions": "200 x 150 x 40 cm",
+      "color": "White",
+      "warranty": "1 Year",
+      "delivery": "Free Delivery in 5-7 days"
+    },
+    {
+      "id": 3,
+      "name": "Single Bed",
+      "image": "bed3.png",
+      "price": "₹12,999",
+      "mrp": "₹15,999",
+      "discount": "19% OFF",
+      "rating": 4.2,
+      "description": "Compact single bed for small rooms",
+      "material": "Solid Wood",
+      "dimensions": "190 x 90 x 35 cm",
+      "color": "Natural",
+      "warranty": "1 Year",
+      "delivery": "Free Delivery in 3-5 days"
+    },
+    {
+      "id": 4,
+      "name": "Double Bed with Storage",
+      "image": "bed4.png",
+      "price": "₹22,999",
+      "mrp": "₹26,999",
+      "discount": "15% OFF",
+      "rating": 4.4,
+      "description": "Spacious double bed with under-bed storage",
+      "material": "Engineered Wood",
+      "dimensions": "200 x 140 x 50 cm",
+      "color": "Walnut",
+      "warranty": "2 Years",
+      "delivery": "Free Delivery in 7-10 days"
+    },
+    {
+      "id": 5,
+      "name": "Platform Bed",
+      "image": "bed5.png",
+      "price": "₹16,999",
+      "mrp": "₹19,999",
+      "discount": "15% OFF",
+      "rating": 4.1,
+      "description": "Modern platform bed with minimalist design",
+      "material": "Solid Wood",
+      "dimensions": "200 x 150 x 30 cm",
+      "color": "Oak",
+      "warranty": "1 Year",
+      "delivery": "Free Delivery in 5-7 days"
+    },
+    {
+      "id": 6,
+      "name": "Bunk Bed",
+      "image": "bed6.png",
+      "price": "₹19,999",
+      "mrp": "₹24,999",
+      "discount": "20% OFF",
+      "rating": 4.3,
+      "description": "Space-saving bunk bed for kids room",
+      "material": "Metal + Wood",
+      "dimensions": "200 x 90 x 160 cm",
+      "color": "Blue & White",
+      "warranty": "2 Years",
+      "delivery": "Free Delivery in 10-12 days"
+    },
+    {
+      "id": 7,
+      "name": "Wooden Bed Frame",
+      "image": "bed7.png",
+      "price": "₹14,999",
+      "mrp": "₹17,999",
+      "discount": "17% OFF",
+      "rating": 4.2,
+      "description": "Solid wood bed frame with headboard",
+      "material": "Solid Teak Wood",
+      "dimensions": "200 x 150 x 120 cm",
+      "color": "Teak Finish",
+      "warranty": "3 Years",
+      "delivery": "Free Delivery in 7-10 days"
+    },
+    {
+      "id": 8,
+      "name": "Upholstered Bed",
+      "image": "bed8.png",
+      "price": "₹28,999",
+      "mrp": "₹34,999",
+      "discount": "17% OFF",
+      "rating": 4.6,
+      "description": "Luxury upholstered bed with fabric headboard",
+      "material": "Fabric + Wood Frame",
+      "dimensions": "200 x 180 x 130 cm",
+      "color": "Grey",
+      "warranty": "2 Years",
+      "delivery": "Free Delivery in 10-15 days"
+    },
+    {
+      "id": 9,
+      "name": "Metal Bed Frame",
+      "image": "bed9.png",
+      "price": "₹9,999",
+      "mrp": "₹12,999",
+      "discount": "23% OFF",
+      "rating": 4.0,
+      "description": "Durable metal bed frame with modern design",
+      "material": "Powder Coated Steel",
+      "dimensions": "200 x 150 x 35 cm",
+      "color": "Black",
+      "warranty": "1 Year",
+      "delivery": "Free Delivery in 3-5 days"
+    },
+    {
+      "id": 10,
+      "name": "Adjustable Bed",
+      "image": "bed15.png",
+      "price": "₹45,999",
+      "mrp": "₹54,999",
+      "discount": "16% OFF",
+      "rating": 4.7,
+      "description": "Electric adjustable bed with remote control",
+      "material": "Memory Foam + Steel Frame",
+      "dimensions": "200 x 150 x 45 cm",
+      "color": "White",
+      "warranty": "5 Years",
+      "delivery": "Free Installation in 15-20 days"
+    },
+    {
+      "id": 11,
+      "name": "Daybed",
+      "image": "bed11.png",
+      "price": "₹15,999",
+      "mrp": "₹18,999",
+      "discount": "16% OFF",
+      "rating": 4.1,
+      "description": "Versatile daybed perfect for guest rooms",
+      "material": "Engineered Wood",
+      "dimensions": "190 x 90 x 80 cm",
+      "color": "Cherry",
+      "warranty": "1 Year",
+      "delivery": "Free Delivery in 5-7 days"
+    },
+    {
+      "id": 12,
+      "name": "Trundle Bed",
+      "image": "bed12.png",
+      "price": "₹17,999",
+      "mrp": "₹21,999",
+      "discount": "18% OFF",
+      "rating": 4.2,
+      "description": "Space-efficient trundle bed with pull-out",
+      "material": "Solid Wood",
+      "dimensions": "200 x 90 x 40 cm",
+      "color": "Honey Oak",
+      "warranty": "2 Years",
+      "delivery": "Free Delivery in 7-10 days"
+    }
+  ],
+
+  "chairs": [
+    {
+      "id": 13,
+      "name": "Ergonomic Office Chair",
+      "image": "chairs.png",
+      "price": "₹12,999",
+      "rating": 4.5,
+      "description": "High-back ergonomic office chair with lumbar support and adjustable height"
+    },
+    {
+      "id": 14,
+      "name": "Solid Wood Dining Chair",
+      "image": "chairs.png",
+      "price": "₹4,999",
+      "rating": 4.3,
+      "description": "Premium solid wood dining chair with cushioned seat and backrest"
+    },
+    {
+      "id": 15,
+      "name": "Executive Leather Chair",
+      "image": "chairs.png",
+      "price": "₹18,999",
+      "rating": 4.6,
+      "description": "Luxury executive chair in genuine leather with 360° swivel and tilt mechanism"
+    },
+    {
+      "id": 16,
+      "name": "Accent Armchair",
+      "image": "chairs.png",
+      "price": "₹15,999",
+      "rating": 4.4,
+      "description": "Stylish accent armchair with fabric upholstery perfect for living room"
+    },
+    {
+      "id": 17,
+      "name": "Gaming Chair",
+      "image": "chairs.png",
+      "price": "₹14,999",
+      "rating": 4.2,
+      "description": "Racing style gaming chair with RGB lighting and adjustable armrests"
+    },
+    {
+      "id": 18,
+      "name": "Recliner Chair",
+      "image": "chairs.png",
+      "price": "₹22,999",
+      "rating": 4.7,
+      "description": "Comfortable recliner chair with footrest and premium fabric upholstery"
+    },
+    {
+      "id": 19,
+      "name": "Bar Stool Chair",
+      "image": "chairs.png",
+      "price": "₹6,999",
+      "rating": 4.1,
+      "description": "Modern bar stool with adjustable height and chrome base"
+    },
+    {
+      "id": 20,
+      "name": "Rocking Chair",
+      "image": "chairs.png",
+      "price": "₹11,999",
+      "rating": 4.3,
+      "description": "Traditional wooden rocking chair with curved design and cushioned seat"
+    },
+    {
+      "id": 21,
+      "name": "Study Chair",
+      "image": "chairs.png",
+      "price": "₹7,999",
+      "rating": 4.2,
+      "description": "Compact study chair with mesh back and adjustable features for students"
+    },
+    {
+      "id": 22,
+      "name": "Lounge Chair",
+      "image": "chairs.png",
+      "price": "₹19,999",
+      "rating": 4.5,
+      "description": "Mid-century modern lounge chair with ottoman in premium leather"
+    },
+    {
+      "id": 23,
+      "name": "Folding Chair",
+      "image": "chairs.png",
+      "price": "₹2,999",
+      "rating": 4.0,
+      "description": "Space-saving folding chair with metal frame and padded seat"
+    },
+    {
+      "id": 24,
+      "name": "Wing Back Chair",
+      "image": "chairs.png",
+      "price": "₹16,999",
+      "rating": 4.4,
+      "description": "Classic wing back chair with high sides and button tufted design"
+    }
+  ],
+
+  "sofas": [
+    {
+      "id": 25,
+      "name": "3 Seater Sofa",
+      "image": "sofas.png",
+      "price": "₹35,999",
+      "rating": 4.6,
+      "description": "Luxury 3 seater sofa"
+    },
+    {
+      "id": 26,
+      "name": "2 Seater Sofa",
+      "image": "sofas.png",
+      "price": "₹25,999",
+      "rating": 4.4,
+      "description": "Compact 2 seater sofa"
+    }
+  ]
+}

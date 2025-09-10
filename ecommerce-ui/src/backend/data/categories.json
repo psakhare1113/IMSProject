@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Living Room Appliances",
+    "image": "mo.webp",
+    "subcategories": [
+      {
+        "name": "Sofas",
+        "products": [
+          { "name": "L-Shaped Sofa", "price": "₹7999", "image": "ho.jpg" },
+          { "name": "Recliner Sofa", "price": "₹9999", "image": "cart-banner.jpg" },
+          { "name": "Wooden Sofa", "price": "₹8499", "image": "Asgaad sofa.png" }
+        ]
+      },
+      {
+        "name": "TV Unit",
+        "products": [
+          { "name": "Wall Mount TV Unit", "price": "₹2999", "image": "xy.avif" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Kitchen Appliances",
+    "image": "office.jpeg",
+    "subcategories": [
+      {
+        "name": "Microwaves",
+        "products": [
+          { "name": "Samsung 23L", "price": "₹5499", "image": "microwave.jpg" }
+        ]
+      }
+    ]
+  }
+]

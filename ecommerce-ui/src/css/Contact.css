@@ -1,0 +1,285 @@
+/* Base styling */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  color: #222;
+  margin: 0;
+}
+
+/* Navbar */
+.navbar {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #eee;
+  background-color: #fff;
+}
+
+.nav-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-links a,
+.nav-links Link {
+  text-decoration: none;
+  color: #222;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-links Link:hover {
+  color: #b88e2f;
+}
+
+.icons {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 18px;
+}
+
+.icons a {
+  text-decoration: none;
+  color: #222;
+  transition: color 0.3s ease;
+}
+
+.icons a:hover {
+  color: #b88e2f;
+}
+
+/* Banner */
+.banner {
+  padding: 3rem 1rem;
+  text-align: center;
+  background-image: url('../images/cart-banner.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  color: #fff;
+}
+
+.banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.banner h2,
+.banner p,
+.banner a {
+  position: relative;
+  z-index: 1;
+}
+
+.banner a {
+  text-decoration: none;
+  color: #fff;
+  transition: color 0.3s ease;
+}
+
+.banner a:hover {
+  color: #b88e2f;
+}
+
+/* Contact Section */
+.contact {
+  padding: 4rem 1rem;
+  background: #fff;
+}
+
+.contact-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.info {
+  flex: 1;
+  min-width: 250px;
+}
+
+.info h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.info h3 svg {
+  color: #b88e2f;
+  font-size: 1.2rem;
+}
+
+.form {
+  flex: 1;
+  min-width: 300px;
+}
+
+.form input {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 1.2rem;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+}
+
+.form textarea {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  min-height: 100px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  resize: vertical;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  box-sizing: border-box;
+}
+
+.form button {
+  padding: 0.75rem 1.5rem;
+  background-color: #b88e2f;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form button:hover {
+  background-color: #9a7828;
+}
+
+/* Features Section */
+.features {
+  background: #fdf4e3;
+  padding: 3rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  text-align: center;
+}
+
+.feature {
+  margin: 12px;
+  max-width: 220px;
+}
+
+.feature .icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #b88e2f;
+}
+
+/* Footer */
+footer {
+  background-color: white;
+  padding: 40px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  color: #555;
+}
+
+.column {
+  flex: 1;
+  min-width: 200px;
+}
+
+.column h4 {
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.column p {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.column p svg {
+  color: #b88e2f;
+}
+
+.column a {
+  display: block;
+  margin-bottom: 8px;
+  text-decoration: none;
+  color: #777;
+  transition: color 0.3s ease;
+}
+
+.column a:hover {
+  color: #b88e2f;
+}
+
+.social-icons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.social-icons a {
+  color: #333;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: #b88e2f;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding: 20px;
+  background-color: white;
+  border-top: 1px solid #eee;
+  font-size: 12px;
+  color: #555;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .column p {
+    justify-content: center;
+  }
+
+  .social-icons {
+    justify-content: center;
+  }
+}
