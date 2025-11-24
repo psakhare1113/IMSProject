@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API</title>
+</head>
+<body>
+    <h1>Test Customer API</h1>
+    <button onclick="testAPI()">Test Add Customer</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            try {
+                const customerData = {
+                    customerRefNumber: "CUST-TEST-123",
+                    name: "Test Customer",
+                    phoneNumber: "1234567890",
+                    shippingDetails: {
+                        address1: "123 Test St",
+                        address2: "",
+                        area: "Test Area"
+                    },
+                    paymentDetails: {
+                        paymentType: "CASH",
+                        maskedCardNumber: "",
+                        transactionReference: ""
+                    }
+                };
+
+                console.log('Sending data:', customerData);
+                
+                const response = await fetch('http://localhost:8080/api/customers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(customerData)
+                });
+
+                console.log('Response status:', response.status);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Success:', result);
+                    document.getElementById('result').innerHTML = 'SUCCESS: ' + JSON.stringify(result);
+                } else {
+                    const error = await response.text();
+                    console.log('Error:', error);
+                    document.getElementById('result').innerHTML = 'ERROR: ' + error;
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                document.getElementById('result').innerHTML = 'NETWORK ERROR: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

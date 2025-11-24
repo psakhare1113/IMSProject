@@ -1,0 +1,133 @@
+.admin .supplier-form-container {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.admin .form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #3498db;
+  color: white;
+  padding: 20px 30px;
+  border-radius: 12px 12px 0 0;
+  margin-bottom: 0;
+}
+
+.admin .supplier-form {
+  background: white;
+  padding: 30px;
+  border-radius: 0 0 12px 12px;
+  box-shadow: none;
+}
+
+.admin .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .admin .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.admin .form-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.admin .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin .form-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.admin .field-icon {
+  color: #3498db;
+  font-size: 16px;
+}
+
+.admin .form-group input {
+  padding: 12px 16px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+.admin .form-group input:focus {
+  outline: none;
+  border-color: #3498db;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.admin .form-group input.error {
+  border-color: #e74c3c;
+  background: #fdf2f2;
+}
+
+.admin .error-text {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.admin .form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e1e8ed;
+}
+
+.admin .btn-cancel, .admin .btn-submit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin .btn-cancel {
+  background: #e74c3c;
+  color: white;
+}
+
+.admin .btn-cancel:hover {
+  background: #c0392b;
+}
+
+.admin .btn-submit {
+  background: #27ae60;
+  color: white;
+}
+
+.admin .btn-submit:hover {
+  background: #219a52;
+}

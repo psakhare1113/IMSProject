@@ -1,0 +1,337 @@
+/* Layout basics */
+.admin .reports-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding: 8px;
+  animation: fadeIn 0.5s ease-in;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.admin .content-wrapper {
+  background: linear-gradient(135deg, #f5f7fa 0%, #cfd8e6 100%);
+  border-radius: 15px;
+  padding: 20px;
+  padding-bottom: 80px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.admin .filter-section {
+  background: linear-gradient(135deg, #f5f7fa 0%, #f5f7fa 100%);
+  padding: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  padding: 8px 0;
+  border-radius: 0;
+  box-shadow: none;
+  justify-content: space-between;
+  border: none;
+}
+
+.admin .search-container {
+  position: relative;
+  flex: 1;
+  max-width: 500px;
+}
+
+.admin .search-bar {
+  width: 100%;
+  padding: 15px 45px 15px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f5f7fa 100%);
+  border-radius: 0px;
+  font-size: 14px;
+  outline: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  transition: all 0.3s ease;
+}
+
+.admin .search-bar:focus {
+  border-color: #3498db;
+}
+
+.admin .search-icon {
+  position: absolute;
+  left: 470px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: black;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.admin .search-icon:hover {
+  transform: translateY(-50%) scale(1.2);
+}
+
+.admin .filter-right {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  position: relative;
+  padding-top: 25px;
+}
+
+.admin .view-icons-top {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.admin .view-btn {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #e1e8ed;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.admin .view-btn:hover {
+  border-color: #3498db;
+  background: #f8f9fa;
+  transform: translateY(-2px);
+}
+
+.admin .view-btn.active {
+  background: #3498db;
+  border-color: #3498db;
+  color: white;
+}
+
+.admin .view-btn svg {
+  font-size: 20px;
+  transition: all 0.3s ease;
+}
+
+.admin .cards-row {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 28px;
+  width: 100%;
+  margin-top: 20px;
+}
+.admin .report-card {
+  flex: 1;
+  background: #fff;
+  padding: 24px 20px 18px 20px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  position: relative;
+  min-width: 170px;
+}
+
+.admin .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.admin .card-icons {
+  display: flex;
+  gap: 10px;
+  color: #a6a6a6;
+  font-size: 14px;
+}
+
+.admin .card-icons svg {
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.admin .card-icons svg:hover {
+  color: #0ea5e9;
+}
+.admin .report-label {
+  font-size: 1.08rem;
+  font-weight: 500;
+  color: #3e3e3e;
+  margin: 4px 0 10px 0;
+}
+.admin .report-value {
+  font-size: 2.25rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #292a2d;
+  margin: 15px 0;
+}
+.admin .trend {
+  font-size: 1.1rem;
+  display: block;
+  text-align: center;
+}
+.admin .trend.up { color: #70cc7e; }
+.admin .trend.down { color: #df6b72; }
+.admin .report-note {
+  font-size: 0.85rem;
+  color: #a6a6a6;
+  display: block;
+  margin-top: 12px;
+}
+
+/* Chart & carriers layout */
+.admin .dashboard-body {
+  display: flex;
+  gap: 18px;
+  width: 100%;
+  margin-bottom: 30px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 20px;
+}
+.admin .chart-container,
+.admin .carriers-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  padding: 18px 22px 24px 22px;
+  flex: 1;
+  min-height: 250px;
+  max-height: 350px;
+}
+.admin .chart-header {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.admin .chart-title {
+  font-weight: 600;
+  color: #323232;
+  margin-bottom: 4px;
+}
+
+.admin .chart-note {
+  font-size: 0.85rem;
+  color: #a6a6a6;
+}
+
+.admin .chart-legend {
+  font-size: 0.9rem;
+  color: #7c899a;
+  margin-top: 15px;
+  text-align: center;
+}
+.admin .delivered-dot,
+.admin .received-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 0 7px 0 17px;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+.admin .delivered-dot { background: #3694ec; }
+.admin .received-dot { background: #5cbc7e; }
+
+/* Bar Graph */
+.admin .bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 15px;
+  height: 160px; /* graph height */
+  margin-top: 18px;
+  padding-bottom: 10px;
+  border-left: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+}
+
+.admin .bars-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 3px;
+  position: relative;
+}
+
+.admin .bar {
+  width: 18px;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.4s ease, background 0.3s ease;
+  min-height: 5px;
+}
+
+.admin .bar.delivered { background: #3694ec; }
+.admin .bar.received { background: #5cbc7e; }
+
+.admin .bar-label {
+  font-size: 0.85rem;
+  color: #868686;
+  margin-top: 8px;
+  text-align: center;
+  white-space: nowrap;
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.admin .bar:hover::after {
+  content: attr(data-value);
+  position: absolute;
+  bottom: 100%;
+  background: #333;
+  color: #fff;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  transform: translateY(-6px);
+  white-space: nowrap;
+}
+
+/* Carriers List */
+.admin .carriers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.admin .carriers-title {
+  font-weight: 600;
+  color: #323232;
+}
+.admin .carriers-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.admin .carriers-list li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #f2f2f2;
+  padding: 7px 0;
+  font-size: 1rem;
+  color: #434a5e;
+}
+.admin .carrier-value {
+  color: #e8a025;
+  font-weight: bold;
+}

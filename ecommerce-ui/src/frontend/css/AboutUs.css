@@ -1,0 +1,274 @@
+/* General Styles */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@600;700&display=swap');
+
+.about-container {
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+  background-color: #fdfdfd;
+  padding: 0 20px;
+  scroll-behavior: smooth;
+}
+
+/* Brand Highlight */
+.brand {
+  font-weight: 700;
+  background: linear-gradient(90deg, #ff6600, #ff9966);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* Image + Text Section */
+.about-image-text {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 100px 60px;
+  gap: 60px;
+  background-color: #f9f9f9;
+}
+
+.image-container {
+  flex: 1 1 50%;
+}
+
+.image-container img {
+  width: 100%;
+  max-height: 900px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.text-container {
+  flex: 1 1 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.text-container h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3rem;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.text-container p {
+  font-size: 1.2rem;
+  line-height: 1.9;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Cards Section */
+.about-cards {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  margin: 60px 0;
+  flex-wrap: wrap;
+}
+
+.about-cards .card {
+  flex: 1;
+  min-width: 250px;
+  background: linear-gradient(145deg, #fff, #f8f8f8);
+  padding: 35px 25px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.about-cards .card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+.about-cards .card h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #ff6600;
+}
+
+.about-cards .card p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #555;
+}
+
+/* Gallery Section */
+.about-gallery {
+  margin: 60px 0;
+  text-align: center;
+}
+
+.about-gallery h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.8rem;
+  margin-bottom: 30px;
+  color: #222;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+}
+
+.gallery-item {
+  flex: 1 1 250px;
+  max-width: 300px;
+  text-align: center;
+  transition: transform 0.4s ease;
+}
+
+.gallery-item img {
+  width: 100%;
+  border-radius: 15px;
+  object-fit: cover;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  margin-bottom: 10px;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.gallery-item img:hover {
+  transform: scale(1.07) rotate(-1deg);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+}
+
+.gallery-item p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Features Section */
+.features {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin: 60px 0;
+  text-align: center;
+}
+
+.feature {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.feature .icon {
+  font-size: 3rem;
+  color: #ff6600;
+}
+
+/* Footer */
+footer {
+  background-color: white;
+  padding: 40px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  color: #555;
+}
+
+.column {
+  flex: 1;
+  min-width: 200px;
+}
+
+.column h4 {
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.column p {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.column p svg {
+  color: #b88e2f;
+}
+
+.column a {
+  display: block;
+  margin-bottom: 8px;
+  text-decoration: none;
+  color: #777;
+  transition: color 0.3s ease;
+}
+
+.column a:hover {
+  color: #b88e2f;
+}
+
+.social-icons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.social-icons a {
+  color: #333;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: #b88e2f;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding: 20px;
+  background-color: white;
+  border-top: 1px solid #eee;
+  font-size: 12px;
+  color: #555;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .about-image-text {
+    flex-direction: column;
+    padding: 60px 20px;
+    gap: 40px;
+  }
+
+  .image-container, .text-container {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+
+  .about-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .gallery {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .features {
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

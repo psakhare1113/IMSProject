@@ -6,7 +6,7 @@ export const CartContext = createContext();
 // Context Provider
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
-
+  
   const addToCart = (product) => {
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.id === product.id);
@@ -36,8 +36,13 @@ export const CartProvider = ({ children }) => {
         .map(item =>
           item.id === id ? { ...item, count: item.count - 1 } : item
         )
-        .filter(item => item.count > 0)
+        .filter(item => item.count > 1)
     );
+  };
+
+  const getTotalItems = () => {
+      return cartItems.reduce((total, item) => total + item.count, 0);
+
   };
 
   // Function to remove item
@@ -46,7 +51,15 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, setCartItems, addToCart, increaseQuantity, decreaseQuantity, removeFromCart }}>
+    <CartContext.Provider value={{ 
+      cartItems, 
+      setCartItems, 
+      addToCart, 
+      increaseQuantity, 
+      decreaseQuantity, 
+      removeFromCart,
+      getTotalItems 
+    }}>
       {children}
     </CartContext.Provider>
   );

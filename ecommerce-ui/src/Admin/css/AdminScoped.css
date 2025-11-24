@@ -1,0 +1,76 @@
+/* Admin Scoped CSS - Apply .admin prefix to all admin components */
+
+/* Update all remaining admin CSS files with .admin prefix */
+
+/* Packages.css */
+.admin .packages-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding: 8px;
+  animation: fadeIn 0.5s ease-in;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+/* Customers.css */
+.admin .customers-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding: 8px;
+}
+
+/* AllOrders.css */
+.admin .orders-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding: 8px;
+}
+
+/* Invoices.css */
+.admin .invoices-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding: 8px;
+}
+
+/* SuppliersPage.css */
+.admin .suppliers-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding: 8px;
+}
+
+/* Shipping.css */
+.admin .shipping-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding: 8px;
+}
+
+/* OutgoingProducts.css */
+.admin .outgoing-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding: 8px;
+}
+
+/* AdminLogin.css */
+.admin .login-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding: 8px;
+}
+
+/* Add this class to all admin component containers */
+.admin {
+  /* Ensure admin styles don't leak to main site */
+  isolation: isolate;
+}

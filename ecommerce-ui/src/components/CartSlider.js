@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { CartContext } from '../context/CartContext';
-import '../css/CartSlider.css';
+import '../frontend/css/CartSlider.css';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const CartSlider = ({ show, handleClose }) => {

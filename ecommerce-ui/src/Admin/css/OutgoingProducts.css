@@ -1,0 +1,360 @@
+.admin .outgoing-products-dashboard {
+  display: grid;
+  grid-template-areas: 
+    "profile topbar topbar"
+    "sidebar main main";
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 60px 1fr;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* User Profile Section */
+.admin .user-profile {
+  grid-area: profile;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.admin .profile-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ff6b35;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.admin .profile-info .greeting {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.admin .profile-info .email {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Sidebar Menu */
+.admin .sidebar {
+  grid-area: sidebar;
+  background: #f8f9fa;
+  border-right: 1px solid #e9ecef;
+  padding: 20px 0;
+}
+
+.admin .menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin .menu-item:hover {
+  background: #e9ecef;
+}
+
+.admin .menu-item.active {
+  background: #fff3e0;
+  border-right: 3px solid #ff6b35;
+}
+
+.admin .menu-icon {
+  margin-right: 12px;
+  font-size: 16px;
+}
+
+.admin .menu-label {
+  font-size: 14px;
+}
+
+/* Top Bar */
+.admin .top-bar {
+  grid-area: topbar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.admin .search-input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 300px;
+}
+
+.admin .status-filter {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-left: 20px;
+}
+
+.admin .export-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin .btn-export {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.admin .btn-export:hover {
+  background: #218838;
+}
+
+.admin .action-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.admin .btn-add {
+  background: #ff6b35;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.admin .view-toggle {
+  display: flex;
+  gap: 5px;
+}
+
+.admin .view-toggle button {
+  padding: 8px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+}
+
+.admin .view-toggle button.active {
+  background: #ff6b35;
+  color: white;
+}
+
+.admin .notifications {
+  display: flex;
+  gap: 10px;
+  font-size: 18px;
+}
+
+/* Main Content */
+.admin .main-content {
+  grid-area: main;
+  display: flex;
+  background: white;
+}
+
+/* Product List Panel */
+.admin .product-list-panel {
+  width: 300px;
+  border-right: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin .product-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.admin .product-item {
+  padding: 15px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin .product-item:hover {
+  background: #f8f9fa;
+}
+
+.admin .product-item.selected {
+  background: #fff3e0;
+  border-left: 3px solid #ff6b35;
+}
+
+.admin .product-id {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.admin .product-name {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.admin .pagination {
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-top: 1px solid #e9ecef;
+}
+
+.admin .pagination button {
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+}
+
+.admin .pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Product Details Panel */
+.admin .product-details-panel {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.admin .product-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.admin .product-toolbar button {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.admin .product-header {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.admin .product-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.admin .company-logo {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.admin .product-number {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.admin .product-date {
+  font-size: 14px;
+}
+
+.admin .product-table {
+  margin-top: 20px;
+}
+
+.admin .product-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin .product-table th,
+.admin .product-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.admin .product-table th {
+  background: #f8f9fa;
+  font-weight: bold;
+}
+
+.admin .product-table td:last-child,
+.admin .product-table th:last-child {
+  text-align: right;
+}
+
+/* Modal */
+.admin .modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.admin .modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 400px;
+}
+
+.admin .modal h4 {
+  margin-top: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin .outgoing-products-dashboard {
+    grid-template-areas: 
+      "topbar"
+      "main";
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px 1fr;
+  }
+  
+  .admin .user-profile,
+  .admin .sidebar {
+    display: none;
+  }
+  
+  .admin .main-content {
+    flex-direction: column;
+  }
+  
+  .admin .product-list-panel {
+    width: 100%;
+    height: 200px;
+  }
+}
