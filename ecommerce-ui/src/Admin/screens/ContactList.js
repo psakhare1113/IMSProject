@@ -1,24 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye, FaPlus } from 'react-icons/fa';
-import { contactService } from '../../services/contactService';
 
 const ContactList = () => {
   const [contacts, setContacts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchContacts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:8080/api/contacts');
+      if (response.ok) {
+        const data = await response.json();
+        setContacts(data);
+      }
+    } catch (error) {
+      console.error('Error fetching contacts:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setContacts(contactService.getAllContacts());
+    fetchContacts();
   }, []);
 
-  const deleteContact = (id) => {
+  const deleteContact = async (id) => {
     if (window.confirm('Are you sure you want to delete this contact?')) {
-      contactService.deleteContact(id);
-      setContacts(contactService.getAllContacts());
+      try {
+        const response = await fetch(`http://localhost:8080/api/contacts/${id}`, {
+          method: 'DELETE'
+        });
+        if (response.ok) {
+          await fetchContacts();
+          alert('Contact deleted successfully!');
+        }
+      } catch (error) {
+        console.error('Error deleting contact:', error);
+      }
     }
   };
 
   return (
     <div style={{ padding: '20px' }}>
+      {loading && <div style={{ padding: '20px', textAlign: 'center' }}>Loading contacts...</div>}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h2>Contact Management</h2>
         <Link to="/admin/contacts/new" style={{ 

@@ -1,0 +1,175 @@
+.settings-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding: 8px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.settings-container .content-wrapper {
+  background: linear-gradient(135deg, #f5f7fa 0%, #cfd8e6 100%);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.settings-container .filter-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  margin-bottom: 10px;
+}
+
+.settings-container .search-container {
+  position: relative;
+  flex: 1;
+  max-width: 500px;
+}
+
+.settings-container .search-bar {
+  width: 100%;
+  padding: 15px 45px 15px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f5f7fa 100%);
+  border-radius: 0px;
+  font-size: 14px;
+  outline: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  transition: all 0.3s ease;
+}
+
+.settings-container .search-bar:focus {
+  border-color: #3498db;
+}
+
+.settings-container .filter-right {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  position: relative;
+  padding-top: 25px;
+}
+
+.settings-container .view-icons-top {
+  position: absolute;
+  top: -15px;
+  right: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.settings-container .view-btn {
+  width: 35px;
+  height: 35px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.settings-container .view-btn svg {
+  font-size: 20px !important;
+}
+
+.settings-container .view-btn:hover {
+  background: #36ade3;
+  border-color: #3498db;
+}
+
+.settings-container .view-btn.active {
+  background: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.settings-container .settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.settings-container .settings-item {
+  background-color: white;
+  padding: 20px 25px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-container .settings-item:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.settings-container .item-name {
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+}
+
+.settings-container .item-icons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.settings-container .star-icon {
+  font-size: 18px;
+  color: #ffd700;
+  cursor: pointer;
+}
+
+.settings-container .folder-icon {
+  font-size: 16px;
+  color: #ffd700;
+  cursor: pointer;
+}
+
+.settings-container .menu-icon {
+  font-size: 16px;
+  color: #999;
+  cursor: pointer;
+}
+
+.settings-container .settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 20px;
+}
+
+.settings-container .settings-card {
+  background: #fff;
+  padding: 30px 18px;
+  border-radius: 16px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.settings-container .settings-card:hover {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  transform: translateY(-3px);
+}
+
+.settings-container .settings-card h3 {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}

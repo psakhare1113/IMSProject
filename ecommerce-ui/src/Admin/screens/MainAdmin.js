@@ -34,6 +34,7 @@ import SuppliersPage from './SuppliersPage';
 import OutgoingProducts from './OutgoingProducts';
 import Reports from './Reports';
 import CategoryList from './CategoryList';
+import Setting from './Setting';
 
 
 
@@ -170,7 +171,7 @@ export default function MainAdmin() {
             {selectedMenu === 'Suppliers' && <SuppliersPage />}
             {selectedMenu === 'Outgoing Products' && <OutgoingProducts />}
             {selectedMenu === 'Reports' && <Reports />}
-            {selectedMenu === 'Settings' && <div style={{padding: '20px'}}><h2>Settings Page</h2><p>Settings functionality coming soon...</p></div>}
+            {selectedMenu === 'Settings' && <Setting />}
 
           </div>
         </div>

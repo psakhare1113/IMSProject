@@ -24,7 +24,7 @@ public class Orders {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    @JsonIgnore
+    @JsonIgnoreProperties({"orders", "shippingDetails", "paymentDetails"})
     private Customer customer;
 
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)

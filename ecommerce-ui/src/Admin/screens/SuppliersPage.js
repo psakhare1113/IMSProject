@@ -1,95 +1,41 @@
 import '../css/SuppliersPage.css';
 import '../css/Packages.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import GridViewIcon from '@mui/icons-material/GridView';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import AddSupplierForm from './AddSupplierForm';
 import * as XLSX from 'xlsx';
 
-const initialSuppliersData = [
-  {
-    id: 1,
-    name: 'XYZ Suppliers',
-    address: '114 Test Address',
-    email: 'xyz@suppliers.com',
-    contact: '8545778888'
-  },
-  {
-    id: 2,
-    name: 'CAC Suppliers',
-    address: '169 Atlace Avenue',
-    email: 'business@cacsupn.com',
-    contact: '7895451145'
-  },
-  {
-    id: 3,
-    name: 'CSTRO Suppliers',
-    address: '114 Test Address',
-    email: 'supplier@cstro.com',
-    contact: '7149101910'
-  },
-  {
-    id: 4,
-    name: 'ABC Trading',
-    address: '256 Commerce Street',
-    email: 'info@abctrading.com',
-    contact: '9876543210'
-  },
-  {
-    id: 5,
-    name: 'Global Supplies',
-    address: '789 Industrial Park',
-    email: 'contact@globalsupplies.com',
-    contact: '8765432109'
-  },
-  {
-    id: 6,
-    name: 'Prime Vendors',
-    address: '321 Business District',
-    email: 'sales@primevendors.com',
-    contact: '7654321098'
-  },
-  {
-    id: 7,
-    name: 'Metro Suppliers',
-    address: '456 Metro Plaza',
-    email: 'orders@metrosuppliers.com',
-    contact: '6543210987'
-  },
-  {
-    id: 8,
-    name: 'Elite Trading Co',
-    address: '654 Elite Tower',
-    email: 'support@elitetrading.com',
-    contact: '5432109876'
-  },
-  {
-    id: 9,
-    name: 'Swift Logistics',
-    address: '987 Swift Center',
-    email: 'info@swiftlogistics.com',
-    contact: '4321098765'
-  },
-  {
-    id: 10,
-    name: 'Apex Suppliers',
-    address: '147 Apex Building',
-    email: 'contact@apexsuppliers.com',
-    contact: '3210987654'
-  }
-];
-
-
-
 export default function SuppliersPage() {
-  const [suppliersData, setSuppliersData] = useState(initialSuppliersData);
+  const [suppliersData, setSuppliersData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [viewMode, setViewMode] = useState('list');
+
+  const fetchSuppliers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:8080/api/suppliers');
+      if (response.ok) {
+        const data = await response.json();
+        setSuppliersData(data);
+      }
+    } catch (error) {
+      console.error('Error fetching suppliers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSuppliers();
+  }, []);
+
   const filteredData = suppliersData.filter(supplier =>
     supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     supplier.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -98,21 +44,8 @@ export default function SuppliersPage() {
   );
   
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
-
-  const handlePrevious = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
 
   const handleAddSupplier = () => {
     setShowModal(true);
@@ -122,18 +55,47 @@ export default function SuppliersPage() {
     setShowModal(false);
   };
 
-  const handleSupplierSubmit = (formData) => {
-    const newSupplier = {
-      id: Math.max(...suppliersData.map(s => s.id)) + 1,
-      name: formData.name,
-      address: formData.address,
-      email: formData.email,
-      contact: formData.phone
-    };
-    setSuppliersData([newSupplier, ...suppliersData]);
-    setCurrentPage(1);
-    setShowModal(false);
-    alert('Supplier added successfully!');
+  const handleSupplierSubmit = async (formData) => {
+    try {
+      const supplierData = {
+        name: formData.name,
+        address: formData.address,
+        email: formData.email,
+        contact: formData.phone
+      };
+
+      const response = await fetch('http://localhost:8080/api/suppliers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(supplierData)
+      });
+
+      if (response.ok) {
+        await fetchSuppliers();
+        setCurrentPage(1);
+        setShowModal(false);
+        alert('Supplier added successfully!');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error adding supplier');
+    }
+  };
+
+  const deleteSupplier = async (id) => {
+    if (window.confirm('Are you sure you want to delete this supplier?')) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/suppliers/${id}`, {
+          method: 'DELETE'
+        });
+        if (response.ok) {
+          await fetchSuppliers();
+          alert('Supplier deleted successfully!');
+        }
+      } catch (error) {
+        console.error('Error deleting supplier:', error);
+      }
+    }
   };
 
   const exportToPDF = () => {
@@ -204,133 +166,140 @@ export default function SuppliersPage() {
 
   return (
     <div className="suppliers-container">
-            <div className="page-title">
-              <h2>List of Suppliers</h2>
+      <div className="page-title">
+        <h2>List of Suppliers</h2>
+      </div>
+
+      <div className="content-wrapper">
+        {loading && <div style={{padding: '20px', textAlign: 'center'}}>Loading suppliers...</div>}
+        <div className="filter-section">
+          <div className="search-container">
+            <input
+              type="text"
+              className="search-bar"
+              placeholder="Search suppliers..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
+
+          <div className="filter-right">
+            <div className="view-icons-top">
+              <button 
+                className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                onClick={() => setViewMode('grid')}
+              >
+                <GridViewIcon fontSize="medium" />
+              </button>
+              <button 
+                className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                onClick={() => setViewMode('list')}
+              >
+                <ViewListIcon fontSize="medium" />
+              </button>
             </div>
+            
+            <div className="show-entries">
+              <span>Show </span>
+              <select 
+                className="entries-select" 
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+              <span> entries</span>
+            </div>
+            
+            <button className="add-packages-btn" onClick={handleAddSupplier}>+ Add Suppliers</button>
+            <button className="btn btn-pdf" onClick={exportToPDF}>📄 Export PDF</button>
+            <button className="btn btn-excel" onClick={exportToExcel}>📊 Export Excel</button>
+          </div>
+        </div>
 
-            {/* Filter Section */}
-            <div className="content-wrapper">
-              <div className="filter-section">
-                <div className="search-container">
-                  <input
-                    type="text"
-                    className="search-bar"
-                    placeholder="Search suppliers..."
-                    value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                  />
-                </div>
-
-                <div className="filter-right">
-                  <div className="view-icons-top">
-                    <button 
-                      className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
-                      onClick={() => setViewMode('grid')}
-                    >
-                      <GridViewIcon fontSize="medium" />
-                    </button>
-                    <button 
-                      className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
-                      onClick={() => setViewMode('list')}
-                    >
-                      <ViewListIcon fontSize="medium" />
-                    </button>
-                  </div>
-                  
-                  <div className="show-entries">
-                    <span>Show </span>
-                    <select 
-                      className="entries-select" 
-                      value={itemsPerPage}
-                      onChange={(e) => {
-                        setItemsPerPage(Number(e.target.value));
-                        setCurrentPage(1);
-                      }}
-                    >
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="25">25</option>
-                      <option value="50">50</option>
-                      <option value="100">100</option>
-                    </select>
-                    <span> entries</span>
-                  </div>
-                  
-                  <button className="add-packages-btn" onClick={handleAddSupplier}>+ Add Suppliers</button>
-                  <button className="btn btn-pdf" onClick={exportToPDF}>📄 Export PDF</button>
-                  <button className="btn btn-excel" onClick={exportToExcel}>📊 Export Excel</button>
-                </div>
-              </div>
-
-              {viewMode === 'list' ? (
-                <div className="packages-table-container">
-                  <table className="packages-table">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Address</th>
-                        <th>Email</th>
-                        <th>Contact</th>
-                        <th style={{textAlign: 'right', paddingRight: '20px'}}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {currentData.map((supplier, index) => (
-                        <tr key={supplier.id} className={index % 2 === 1 ? 'row-alternate' : ''}>
-                          <td>{supplier.id}</td>
-                          <td>{supplier.name}</td>
-                          <td>{supplier.address}</td>
-                          <td>{supplier.email}</td>
-                          <td>{supplier.contact}</td>
-                          <td style={{textAlign: 'right', paddingRight: '20px'}}>
-                            <div className="action-buttons">
-                              <button className="action-btn edit-btn" title="Edit">
-                                <FaEdit />
-                              </button>
-                              <button className="action-btn delete-btn" title="Delete">
-                                <FaTrashAlt />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="grid-wrapper">
-                  <div className="packages-grid">
-                    {currentData.map((supplier) => (
-                      <div key={supplier.id} className="package-card">
-                        <div className="card-header">
-                          <h3>{supplier.name}</h3>
-                          <div className="card-actions">
-                            <button className="action-btn edit-btn" title="Edit">
-                              <FaEdit />
-                            </button>
-                            <button className="action-btn delete-btn" title="Delete">
-                              <FaTrashAlt />
-                            </button>
-                          </div>
-                        </div>
-                        <div className="card-body">
-                          <p><strong>ID:</strong> {supplier.id}</p>
-                          <p><strong>Address:</strong> {supplier.address}</p>
-                          <p><strong>Email:</strong> {supplier.email}</p>
-                          <p><strong>Contact:</strong> {supplier.contact}</p>
-                        </div>
+        {viewMode === 'list' ? (
+          <div className="packages-table-container">
+            <table className="packages-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Address</th>
+                  <th>Email</th>
+                  <th>Contact</th>
+                  <th style={{textAlign: 'right', paddingRight: '20px'}}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentData.map((supplier, index) => (
+                  <tr key={supplier.id} className={index % 2 === 1 ? 'row-alternate' : ''}>
+                    <td>{supplier.id}</td>
+                    <td>{supplier.name}</td>
+                    <td>{supplier.address}</td>
+                    <td>{supplier.email}</td>
+                    <td>{supplier.contact}</td>
+                    <td style={{textAlign: 'right', paddingRight: '20px'}}>
+                      <div className="action-buttons">
+                        <button className="action-btn edit-btn" title="Edit">
+                          <FaEdit />
+                        </button>
+                        <button 
+                          className="action-btn delete-btn" 
+                          title="Delete"
+                          onClick={() => deleteSupplier(supplier.id)}
+                        >
+                          <FaTrashAlt />
+                        </button>
                       </div>
-                    ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="grid-wrapper">
+            <div className="packages-grid">
+              {currentData.map((supplier) => (
+                <div key={supplier.id} className="package-card">
+                  <div className="card-header">
+                    <h3>{supplier.name}</h3>
+                    <div className="card-actions">
+                      <button className="action-btn edit-btn" title="Edit">
+                        <FaEdit />
+                      </button>
+                      <button 
+                        className="action-btn delete-btn" 
+                        title="Delete"
+                        onClick={() => deleteSupplier(supplier.id)}
+                      >
+                        <FaTrashAlt />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="card-body">
+                    <p><strong>ID:</strong> {supplier.id}</p>
+                    <p><strong>Address:</strong> {supplier.address}</p>
+                    <p><strong>Email:</strong> {supplier.email}</p>
+                    <p><strong>Contact:</strong> {supplier.contact}</p>
                   </div>
                 </div>
-              )}
+              ))}
             </div>
+          </div>
+        )}
+      </div>
 
-      {/* Pagination */}
       <div className="pagination">
         <button 
           className="page-btn" 
@@ -357,28 +326,26 @@ export default function SuppliersPage() {
         </button>
       </div>
 
-            {/* Import Section */}
-            <div className="import-section">
-              <h3>Import Suppliers Data</h3>
-              <div className="import-controls">
-                <div className="file-input-group">
-                  <label htmlFor="file-input">Input File</label>
-                  <div className="file-input-wrapper">
-                    <input 
-                      type="file" 
-                      id="file-input" 
-                      className="file-input" 
-                      onChange={handleFileChange}
-                      accept=".csv,.xlsx,.xls"
-                    />
-                    <span className="file-input-text">Choose File | No file chosen</span>
-                  </div>
-                </div>
-                <button className="btn btn-import" onClick={handleImport}>Import</button>
-              </div>
+      <div className="import-section">
+        <h3>Import Suppliers Data</h3>
+        <div className="import-controls">
+          <div className="file-input-group">
+            <label htmlFor="file-input">Input File</label>
+            <div className="file-input-wrapper">
+              <input 
+                type="file" 
+                id="file-input" 
+                className="file-input" 
+                onChange={handleFileChange}
+                accept=".csv,.xlsx,.xls"
+              />
+              <span className="file-input-text">Choose File | No file chosen</span>
             </div>
+          </div>
+          <button className="btn btn-import" onClick={handleImport}>Import</button>
+        </div>
+      </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

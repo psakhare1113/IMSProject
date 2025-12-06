@@ -185,27 +185,47 @@
 
 .admin .card-header {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 5px;
+  right: 5px;
   display: flex;
-  gap: 8px;
+  gap: 5px;
+  z-index: 10;
 }
 
 .admin .star {
   color: gold;
   cursor: pointer;
+  font-size: 14px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  padding: 2px;
 }
 
 .admin .menu {
   cursor: pointer;
   font-weight: bold;
   color: #777;
+  font-size: 18px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  padding: 2px;
 }
 
 .admin .integration-logo {
   width: 90px;
-  height: auto;
-  margin: 20px auto;
+  height: 60px;
+  margin: 25px auto 10px;
+  object-fit: contain;
 }
 
 .admin .integration-card h3 {
@@ -299,69 +319,153 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
 }
 
 .admin .modal-content {
   background: white;
-  border-radius: 12px;
-  padding: 30px;
-  width: 400px;
-  position: relative;
+  border-radius: 16px;
+  width: 500px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
 }
 
-.admin .modal-close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.admin .supplier-form-container {
+  padding: 0;
+}
+
+.admin .form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 30px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.admin .form-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.admin .close-btn {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 28px;
   cursor: pointer;
-  color: #666;
+  color: #6b7280;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
-.admin .modal-content h3 {
-  color: #333;
-  margin-bottom: 20px;
+.admin .close-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.admin .supplier-form {
+  padding: 30px;
 }
 
 .admin .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .admin .form-group label {
   display: block;
-  margin-bottom: 5px;
-  color: #333;
+  margin-bottom: 8px;
+  color: #374151;
   font-weight: 500;
-}
-
-.admin .form-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
   font-size: 14px;
 }
 
-.admin .submit-btn {
-  background: #0ea5e9;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 12px 24px;
-  font-weight: 500;
-  cursor: pointer;
+.admin .form-group input[type="text"],
+.admin .form-group input[type="file"] {
   width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: #f9fafb;
 }
 
-.admin .submit-btn:hover {
-  background: #0284c7;
+.admin .form-group input[type="text"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.admin .form-group input[type="file"] {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.admin .form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.admin .btn-cancel,
+.admin .btn-submit {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.admin .btn-cancel {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.admin .btn-cancel:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.admin .btn-submit {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+.admin .btn-submit:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .admin .file-input-wrapper {

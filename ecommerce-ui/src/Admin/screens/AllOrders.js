@@ -21,6 +21,7 @@ const Orders = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [products, setProducts] = useState([]);
+  const [editingOrder, setEditingOrder] = useState(null);
   const [formData, setFormData] = useState({
     orderNo: "",
     customer: "",
@@ -73,6 +74,7 @@ const Orders = () => {
   };
 
   const handleAdd = () => {
+    setEditingOrder(null);
     setFormData({
       orderNo: "",
       customer: "",
@@ -87,6 +89,43 @@ const Orders = () => {
     });
     fetchProducts();
     setShowForm(true);
+  };
+
+  const handleEdit = (order) => {
+    setEditingOrder(order);
+    setFormData({
+      orderNo: order.orderNo,
+      customer: order.customer,
+      date: order.date,
+      invoiced: order.invoiced,
+      packed: order.packed !== 'Not Packed' ? order.packed : '',
+      shipped: order.shipped !== 'Not Shipped' ? order.shipped : '',
+      amount: order.amount,
+      status: order.status,
+      productName: "",
+      quantity: 1
+    });
+    fetchProducts();
+    setShowForm(true);
+  };
+
+  const handleDelete = async (orderId) => {
+    if (window.confirm('Are you sure you want to delete this order?')) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/orders/${orderId}`, {
+          method: 'DELETE'
+        });
+        if (response.ok) {
+          await fetchOrders();
+          alert('Order deleted successfully!');
+        } else {
+          alert('Failed to delete order');
+        }
+      } catch (error) {
+        console.error('Error deleting order:', error);
+        alert('Error deleting order');
+      }
+    }
   };
 
   // Fetch orders from database
@@ -125,70 +164,94 @@ const Orders = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      // First, we need a customer reference number
-      const customerRefNumber = `CUST-${Date.now()}`;
-      
-      // Create customer first (simplified)
-      const customerData = {
-        customerRefNumber: customerRefNumber,
-        name: formData.customer,
-        phoneNumber: '0000000000',
-        shippingDetails: {
-          address1: 'Default Address',
-          address2: '',
-          area: 'Default Area'
-        },
-        paymentDetails: {
-          paymentType: 'CASH',
-          maskedCardNumber: '',
-          transactionReference: ''
-        }
-      };
-      
-      const customerResponse = await fetch('http://localhost:8080/api/customers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(customerData)
-      });
-      
-      if (customerResponse.ok) {
-        // Validate product selection
-        if (!formData.productName) {
-          alert('Please select a product');
-          return;
-        }
-        
-        // Create order
+      if (editingOrder) {
+        // Update existing order
         const orderData = {
           status: formData.status,
           orderItems: [{
-            productName: formData.productName,
+            productName: formData.productName || 'Updated Product',
             quantity: parseInt(formData.quantity),
             price: parseFloat(formData.amount.replace('₹', '')) || 0
           }]
         };
         
-        const orderResponse = await fetch(`http://localhost:8080/api/orders/${customerRefNumber}`, {
-          method: 'POST',
+        const response = await fetch(`http://localhost:8080/api/orders/${editingOrder.id}`, {
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(orderData)
         });
         
-        if (orderResponse.ok) {
-          await fetchOrders(); // Refresh from database
+        if (response.ok) {
+          await fetchOrders();
           setShowForm(false);
-          setCurrentPage(1);
-          alert('Order added successfully!');
+          setEditingOrder(null);
+          alert('Order updated successfully!');
         } else {
-          const errorText = await orderResponse.text();
-          alert(`Failed to create order: ${errorText}`);
+          alert('Failed to update order');
         }
       } else {
-        alert('Failed to create customer');
+        // Create new order
+        const customerRefNumber = `CUST-${Date.now()}`;
+        
+        const customerData = {
+          customerRefNumber: customerRefNumber,
+          name: formData.customer,
+          phoneNumber: '0000000000',
+          shippingDetails: {
+            address1: 'Default Address',
+            address2: '',
+            area: 'Default Area'
+          },
+          paymentDetails: {
+            paymentType: 'CASH',
+            maskedCardNumber: '',
+            transactionReference: ''
+          }
+        };
+        
+        const customerResponse = await fetch('http://localhost:8080/api/customers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(customerData)
+        });
+        
+        if (customerResponse.ok) {
+          if (!formData.productName) {
+            alert('Please select a product');
+            return;
+          }
+          
+          const orderData = {
+            status: formData.status,
+            orderItems: [{
+              productName: formData.productName,
+              quantity: parseInt(formData.quantity),
+              price: parseFloat(formData.amount.replace('₹', '')) || 0
+            }]
+          };
+          
+          const orderResponse = await fetch(`http://localhost:8080/api/orders/${customerRefNumber}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+          });
+          
+          if (orderResponse.ok) {
+            await fetchOrders();
+            setShowForm(false);
+            setCurrentPage(1);
+            alert('Order added successfully!');
+          } else {
+            const errorText = await orderResponse.text();
+            alert(`Failed to create order: ${errorText}`);
+          }
+        } else {
+          alert('Failed to create customer');
+        }
       }
     } catch (error) {
-      console.error('Error creating order:', error);
-      alert('Error creating order');
+      console.error('Error:', error);
+      alert('Error processing order');
     }
   };
 
@@ -298,13 +361,27 @@ const Orders = () => {
                     </td>
                     <td style={{textAlign: 'right', paddingRight: '20px'}}>
                       <div className="action-buttons">
-                        <button className="action-btn edit-btn" title="Edit">
+                        <button 
+                          className="action-btn edit-btn" 
+                          title="Edit"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(o);
+                          }}
+                        >
                           <FaEdit />
                         </button>
                         <button className="action-btn download-btn" title="View">
                           <FaEye />
                         </button>
-                        <button className="action-btn delete-btn" title="Delete">
+                        <button 
+                          className="action-btn delete-btn" 
+                          title="Delete"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(o.id);
+                          }}
+                        >
                           <FaTrashAlt />
                         </button>
                       </div>
@@ -322,13 +399,27 @@ const Orders = () => {
                   <div className="card-header">
                     <h3>{o.customer}</h3>
                     <div className="card-actions">
-                      <button className="action-btn edit-btn" title="Edit">
+                      <button 
+                        className="action-btn edit-btn" 
+                        title="Edit"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(o);
+                        }}
+                      >
                         <FaEdit />
                       </button>
                       <button className="action-btn download-btn" title="View">
                         <FaEye />
                       </button>
-                      <button className="action-btn delete-btn" title="Delete">
+                      <button 
+                        className="action-btn delete-btn" 
+                        title="Delete"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(o.id);
+                        }}
+                      >
                         <FaTrashAlt />
                       </button>
                     </div>
@@ -390,7 +481,7 @@ const Orders = () => {
         <div className="modal-overlay" onClick={() => setShowForm(false)}>
           <div className="small-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Add Order</h3>
+              <h3>{editingOrder ? 'Edit Order' : 'Add Order'}</h3>
               <button className="close-btn" onClick={() => setShowForm(false)}>×</button>
             </div>
             <form className="modal-form" onSubmit={handleFormSubmit}>
@@ -414,6 +505,7 @@ const Orders = () => {
                     value={formData.customer}
                     onChange={handleInputChange}
                     placeholder="Enter customer name"
+                    disabled={editingOrder !== null}
                     required
                   />
                 </div>
@@ -530,7 +622,7 @@ const Orders = () => {
                 </button>
                 <button type="submit" className="btn-submit">
                   <SaveIcon />
-                  Submit
+                  {editingOrder ? 'Update' : 'Submit'}
                 </button>
               </div>
             </form>

@@ -1,110 +1,17 @@
 import '../css/SuppliersPage.css';
 import '../css/Packages.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import GridViewIcon from '@mui/icons-material/GridView';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import AddInvoiceForm from './AddInvoiceForm';
 import * as XLSX from 'xlsx';
 
-const initialInvoicesData = [
-  {
-    id: 1,
-    invoiceNumber: 'INV-001',
-    customerName: 'John Smith',
-    amount: 1250.00,
-    tax: 125.00,
-    dueDate: '2024-02-15',
-    status: 'Pending'
-  },
-  {
-    id: 2,
-    invoiceNumber: 'INV-002',
-    customerName: 'Alice Johnson',
-    amount: 850.50,
-    tax: 85.05,
-    dueDate: '2024-02-20',
-    status: 'Paid'
-  },
-  {
-    id: 3,
-    invoiceNumber: 'INV-003',
-    customerName: 'Bob Wilson',
-    amount: 2100.75,
-    tax: 210.08,
-    dueDate: '2024-01-30',
-    status: 'Overdue'
-  },
-  {
-    id: 4,
-    invoiceNumber: 'INV-004',
-    customerName: 'Sarah Davis',
-    amount: 675.25,
-    tax: 67.53,
-    dueDate: '2024-02-25',
-    status: 'Pending'
-  },
-  {
-    id: 5,
-    invoiceNumber: 'INV-005',
-    customerName: 'Mike Brown',
-    amount: 1450.00,
-    tax: 145.00,
-    dueDate: '2024-02-18',
-    status: 'Paid'
-  },
-  {
-    id: 6,
-    invoiceNumber: 'INV-006',
-    customerName: 'Emma Taylor',
-    amount: 920.30,
-    tax: 92.03,
-    dueDate: '2024-02-22',
-    status: 'Pending'
-  },
-  {
-    id: 7,
-    invoiceNumber: 'INV-007',
-    customerName: 'James Anderson',
-    amount: 1800.00,
-    tax: 180.00,
-    dueDate: '2024-01-25',
-    status: 'Overdue'
-  },
-  {
-    id: 8,
-    invoiceNumber: 'INV-008',
-    customerName: 'Lisa Martinez',
-    amount: 550.75,
-    tax: 55.08,
-    dueDate: '2024-02-28',
-    status: 'Pending'
-  },
-  {
-    id: 9,
-    invoiceNumber: 'INV-009',
-    customerName: 'David Wilson',
-    amount: 2250.50,
-    tax: 225.05,
-    dueDate: '2024-02-12',
-    status: 'Paid'
-  },
-  {
-    id: 10,
-    invoiceNumber: 'INV-010',
-    customerName: 'Christine Moore',
-    amount: 1125.25,
-    tax: 112.53,
-    dueDate: '2024-02-16',
-    status: 'Cancelled'
-  }
-];
-
 export default function Invoices() {
-  const [invoicesData, setInvoicesData] = useState(initialInvoicesData);
+  const [invoicesData, setInvoicesData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [editingInvoice, setEditingInvoice] = useState(null);
@@ -118,6 +25,25 @@ export default function Invoices() {
     status: ''
   });
 
+  const fetchInvoices = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:8080/api/invoices');
+      if (response.ok) {
+        const data = await response.json();
+        setInvoicesData(data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
+
   const filteredData = invoicesData.filter(invoice =>
     invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
     invoice.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -125,7 +51,6 @@ export default function Invoices() {
   );
   
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
@@ -159,27 +84,54 @@ export default function Invoices() {
     setShowModal(false);
   };
 
-  const handleInvoiceSubmit = (e) => {
+  const handleInvoiceSubmit = async (e) => {
     e.preventDefault();
-    const invoiceData = {
-      ...formData,
-      amount: parseFloat(formData.amount),
-      tax: parseFloat(formData.tax) || 0
-    };
-
-    if (editingInvoice) {
-      setInvoicesData(prev => prev.map(inv => 
-        inv.id === editingInvoice.id ? { ...inv, ...invoiceData } : inv
-      ));
-    } else {
-      const newInvoice = {
-        id: Math.max(...invoicesData.map(i => i.id)) + 1,
-        ...invoiceData
+    try {
+      const invoiceData = {
+        invoiceNumber: formData.invoiceNumber,
+        customerName: formData.customerName,
+        amount: parseFloat(formData.amount),
+        tax: parseFloat(formData.tax) || 0,
+        dueDate: formData.dueDate,
+        status: formData.status
       };
-      setInvoicesData([newInvoice, ...invoicesData]);
-      setCurrentPage(1);
+
+      if (editingInvoice) {
+        await fetch(`http://localhost:8080/api/invoices/${editingInvoice.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(invoiceData)
+        });
+        alert('Invoice updated successfully!');
+      } else {
+        await fetch('http://localhost:8080/api/invoices', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(invoiceData)
+        });
+        alert('Invoice added successfully!');
+      }
+      await fetchInvoices();
+      setShowModal(false);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error: ' + error.message);
     }
-    setShowModal(false);
+  };
+
+  const deleteInvoice = async (id) => {
+    if (window.confirm('Delete this invoice?')) {
+      try {
+        await fetch(`http://localhost:8080/api/invoices/${id}`, {
+          method: 'DELETE'
+        });
+        alert('Invoice deleted successfully!');
+        await fetchInvoices();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
+      }
+    }
   };
 
   const exportToPDF = () => {
@@ -227,37 +179,14 @@ export default function Invoices() {
     XLSX.writeFile(workbook, 'invoices_list.xlsx');
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedFile(file);
-    const fileText = document.querySelector('.file-input-text');
-    if (file) {
-      fileText.textContent = `${file.name} | File selected`;
-    } else {
-      fileText.textContent = 'Choose File | No file chosen';
-    }
-  };
-
-  const handleImport = () => {
-    if (selectedFile) {
-      console.log('Importing file:', selectedFile.name);
-      alert(`File "${selectedFile.name}" imported successfully!`);
-      setSelectedFile(null);
-      document.querySelector('.file-input-text').textContent = 'Choose File | No file chosen';
-      document.getElementById('file-input').value = '';
-    } else {
-      alert('Please select a file to import');
-    }
-  };
-
   return (
     <div className="suppliers-container">
       <div className="page-title">
         <h2>List of Invoices</h2>
       </div>
 
-      {/* Filter Section */}
       <div className="content-wrapper">
+        {loading && <div style={{padding: '20px', textAlign: 'center'}}>Loading invoices...</div>}
         <div className="filter-section">
           <div className="search-container">
             <input
@@ -345,7 +274,7 @@ export default function Invoices() {
                         <button className="action-btn edit-btn" onClick={() => handleEdit(invoice)} title="Edit">
                           <FaEdit />
                         </button>
-                        <button className="action-btn delete-btn" title="Delete">
+                        <button className="action-btn delete-btn" onClick={() => deleteInvoice(invoice.id)} title="Delete">
                           <FaTrashAlt />
                         </button>
                       </div>
@@ -366,7 +295,7 @@ export default function Invoices() {
                       <button className="action-btn edit-btn" onClick={() => handleEdit(invoice)} title="Edit">
                         <FaEdit />
                       </button>
-                      <button className="action-btn delete-btn" title="Delete">
+                      <button className="action-btn delete-btn" onClick={() => deleteInvoice(invoice.id)} title="Delete">
                         <FaTrashAlt />
                       </button>
                     </div>
@@ -389,7 +318,6 @@ export default function Invoices() {
         )}
       </div>
 
-      {/* Pagination */}
       <div className="pagination">
         <button 
           className="page-btn" 
@@ -416,9 +344,6 @@ export default function Invoices() {
         </button>
       </div>
 
-     
-
-      {/* Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

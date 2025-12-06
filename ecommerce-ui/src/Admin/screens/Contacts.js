@@ -31,32 +31,26 @@ const Contacts = ({ setActiveMenu }) => {
   const [editingContact, setEditingContact] = useState(null);
   const [activeDropdown, setActiveDropdown] = useState(null);
 
-  useEffect(() => {
-    const savedContacts = localStorage.getItem('contacts');
-    if (savedContacts) {
-      const parsedContacts = JSON.parse(savedContacts);
-      setContacts(parsedContacts);
-      setFilteredContacts(parsedContacts);
-    } else {
-      const defaultContacts = [
-        { id: '09825', fullName: 'Glen Graham', email: 'glen_borer@damien.org', phone: '891-599-7471', company: 'Alphabet Inc.', address: '146 Railway Street, CYRDD GARDENS', city: 'Queensland', country: 'Australia' },
-        { id: '42379', fullName: 'Russell Gregory', email: 'vincent_bode@gmail.com', phone: '555-0123', company: 'Hitachi', address: '123 Tech Street', city: 'Tokyo', country: 'Japan' },
-        { id: '27993', fullName: 'Mark Sutton', email: 'kenyon_schaden@yahoo.com', phone: '555-0124', company: 'Match Group', address: '456 Dating Ave', city: 'New York', country: 'USA' },
-        { id: '07370', fullName: 'Effie Schwartz', email: 'charley_wiza@gmail.com', phone: '555-0125', company: 'Grubhub', address: '789 Food Lane', city: 'Chicago', country: 'USA' },
-        { id: '06608', fullName: 'Willie Lawson', email: 'buford.gottlieb@gmail.com', phone: '555-0126', company: 'Copart', address: '321 Auto Blvd', city: 'Dallas', country: 'USA' },
-        { id: '92754', fullName: 'Isabella Greene', email: 'stan.kreiger@gmail.com', phone: '555-0127', company: 'Overstock', address: '654 Commerce St', city: 'Salt Lake City', country: 'USA' },
-        { id: '53690', fullName: 'Madge Rodriguez', email: 'nels.powlowski@yahoo.com', phone: '555-0128', company: 'The Stars Group', address: '987 Gaming Way', city: 'Toronto', country: 'Canada' },
-        { id: '11473', fullName: 'Evan Banks', email: 'shany_beer@waters.info', phone: '555-0129', company: 'Spotify', address: '147 Music Street', city: 'Stockholm', country: 'Sweden' },
-        { id: '61659', fullName: 'Alvin Hale', email: 'quentin_nicolas@waters.ca', phone: '555-0130', company: 'ServiceNow', address: '258 Service Ave', city: 'Santa Clara', country: 'USA' },
-        { id: '79680', fullName: 'Derrick Malone', email: 'andreanne.mclaughlin@hotmail.com', phone: '555-0131', company: 'Newegg', address: '369 Tech Plaza', city: 'Los Angeles', country: 'USA' },
-        { id: '55623', fullName: 'Glenn Wong', email: 'jack.ullrich@kattie.name', phone: '555-0132', company: 'Lyft', address: '741 Ride Street', city: 'San Francisco', country: 'USA' },
-        { id: '79862', fullName: 'Neil Taylor', email: 'eleonora.hane@blanda.tv', phone: '555-0133', company: 'Workday', address: '852 Work Lane', city: 'Pleasanton', country: 'USA' },
-        { id: '79863', fullName: 'Adelaide Fitzgerald', email: 'frieda_larkin@hotmail.com', phone: '555-0134', company: 'TripAdvisor', address: '963 Travel Blvd', city: 'Needham', country: 'USA' }
-      ];
-      setContacts(defaultContacts);
-      setFilteredContacts(defaultContacts);
-      localStorage.setItem('contacts', JSON.stringify(defaultContacts));
+  const [loading, setLoading] = useState(true);
+
+  const fetchContacts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:8080/api/contacts');
+      if (response.ok) {
+        const data = await response.json();
+        setContacts(data);
+        setFilteredContacts(data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchContacts();
   }, []);
 
   useEffect(() => {
@@ -104,24 +98,36 @@ const Contacts = ({ setActiveMenu }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingContact) {
-      const updatedContacts = contacts.map(contact =>
-        contact.id === editingContact.id ? { ...contact, ...formData } : contact
-      );
-      setContacts(updatedContacts);
-      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
-    } else {
-      const newContact = {
-        id: Date.now().toString(),
-        ...formData
-      };
-      const updatedContacts = [...contacts, newContact];
-      setContacts(updatedContacts);
-      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+    try {
+      if (editingContact) {
+        const response = await fetch(`http://localhost:8080/api/contacts/${editingContact.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        if (response.ok) {
+          await fetchContacts();
+          handleCloseForm();
+          alert('Contact updated successfully!');
+        }
+      } else {
+        const response = await fetch('http://localhost:8080/api/contacts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        if (response.ok) {
+          await fetchContacts();
+          handleCloseForm();
+          alert('Contact added successfully!');
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error: ' + error.message);
     }
-    handleCloseForm();
   };
 
   const handleEdit = (contact) => {
@@ -138,11 +144,18 @@ const Contacts = ({ setActiveMenu }) => {
     setShowAddForm(true);
   };
 
-  const handleDelete = (contactId) => {
+  const handleDelete = async (contactId) => {
     if (window.confirm('Are you sure you want to delete this contact?')) {
-      const updatedContacts = contacts.filter(c => c.id !== contactId);
-      setContacts(updatedContacts);
-      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+      try {
+        await fetch(`http://localhost:8080/api/contacts/${contactId}`, {
+          method: 'DELETE'
+        });
+        alert('Contact deleted successfully!');
+        await fetchContacts();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
+      }
     }
   };
 
@@ -178,6 +191,7 @@ const Contacts = ({ setActiveMenu }) => {
   return (
     <div className="admin contacts-container">
 
+      {loading && <div style={{padding: '20px', textAlign: 'center'}}>Loading contacts...</div>}
       
       <div className="content-wrapper">
       <div className="filter-section">
@@ -238,21 +252,21 @@ const Contacts = ({ setActiveMenu }) => {
                 <td className="actions-cell" style={{textAlign: 'right', paddingRight: '20px'}}>
                   <button 
                     className="action-btn edit-btn"
-                    onClick={() => handleEdit(contact)}
+                    onClick={(e) => { e.stopPropagation(); handleEdit(contact); }}
                     title="Edit"
                   >
                     <FaEdit />
                   </button>
                   <button 
                     className="action-btn download-btn"
-                    onClick={() => handleView(contact)}
+                    onClick={(e) => { e.stopPropagation(); handleView(contact); }}
                     title="Download"
                   >
                     <FaCloudDownloadAlt />
                   </button>
                   <button 
                     className="action-btn delete-btn"
-                    onClick={() => handleDelete(contact.id)}
+                    onClick={(e) => { e.stopPropagation(); handleDelete(contact.id); }}
                     title="Delete"
                   >
                     <FaTrashAlt />
@@ -340,8 +354,8 @@ const Contacts = ({ setActiveMenu }) => {
       </div>
 
       {showAddForm && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className="modal-overlay" onClick={handleCloseForm}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="supplier-form-container">
               <div className="form-header">
                 <h2>{editingContact ? 'Edit Contact' : 'Add New Contact'}</h2>

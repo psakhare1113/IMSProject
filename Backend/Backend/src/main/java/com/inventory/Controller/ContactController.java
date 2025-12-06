@@ -49,8 +49,5 @@ public class ContactController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/status/{status}")
-    public ResponseEntity<List<Contact>> getContactsByStatus(@PathVariable String status) {
-        return ResponseEntity.ok(contactRepository.findByStatus(status));
-    }
+
 }

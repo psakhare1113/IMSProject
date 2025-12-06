@@ -1,24 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FaEdit, FaArrowLeft } from 'react-icons/fa';
-import { contactService } from '../../services/contactService';
 
 const ContactView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [contact, setContact] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const foundContact = contactService.getContactById(id);
-    if (foundContact) {
-      setContact(foundContact);
-    } else {
-      navigate('/admin/contacts');
-    }
+    const fetchContact = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/contacts/${id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setContact(data);
+        } else {
+          navigate('/admin/contacts');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        navigate('/admin/contacts');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchContact();
   }, [id, navigate]);
 
+  if (loading) {
+    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>;
+  }
+
   if (!contact) {
-    return <div>Loading...</div>;
+    return <div style={{ padding: '20px', textAlign: 'center' }}>Contact not found</div>;
   }
 
   return (

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { contactService } from '../../services/contactService';
 
 const ContactForm = () => {
   const navigate = useNavigate();
@@ -15,28 +14,57 @@ const ContactForm = () => {
   });
 
   useEffect(() => {
-    if (isEdit) {
-      const contact = contactService.getContactById(id);
-      if (contact) {
-        setFormData(contact);
+    const fetchContact = async () => {
+      if (isEdit) {
+        try {
+          const response = await fetch(`http://localhost:8080/api/contacts/${id}`);
+          if (response.ok) {
+            const contact = await response.json();
+            setFormData(contact);
+          }
+        } catch (error) {
+          console.error('Error fetching contact:', error);
+        }
       }
-    }
+    };
+    fetchContact();
   }, [id, isEdit]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (isEdit) {
-      contactService.updateContact(id, formData);
-    } else {
-      contactService.saveContact(formData);
+    try {
+      if (isEdit) {
+        const response = await fetch(`http://localhost:8080/api/contacts/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        
+        if (response.ok) {
+          navigate('/admin/contacts');
+          alert('Contact updated successfully!');
+        }
+      } else {
+        const response = await fetch('http://localhost:8080/api/contacts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        
+        if (response.ok) {
+          navigate('/admin/contacts');
+          alert('Contact created successfully!');
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error saving contact');
     }
-    
-    navigate('/admin/contacts');
   };
 
   return (

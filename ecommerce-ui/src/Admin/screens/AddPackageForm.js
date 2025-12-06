@@ -14,19 +14,10 @@ function AddPackageForm({ onClose, onSubmit, editingPackage, formData, setFormDa
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    if (name === 'weight' || name === 'price') {
-      const numericValue = value.replace(/[^0-9.]/g, '');
-      setFormData(prev => ({
-        ...prev,
-        [name]: numericValue
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
     
     if (errors[name]) {
       setErrors(prev => ({
@@ -42,10 +33,6 @@ function AddPackageForm({ onClose, onSubmit, editingPackage, formData, setFormDa
     if (!formData.customerName.trim()) newErrors.customerName = 'Customer name is required';
     if (!formData.date.trim()) newErrors.date = 'Date is required';
     if (!formData.status.trim()) newErrors.status = 'Status is required';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
-    if (!formData.weight.trim()) newErrors.weight = 'Weight is required';
-    if (!formData.price.trim()) newErrors.price = 'Price is required';
-    if (!formData.category.trim()) newErrors.category = 'Category is required';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -132,7 +119,6 @@ function AddPackageForm({ onClose, onSubmit, editingPackage, formData, setFormDa
           </div>
 
 
-          
         </div>
 
         <div className="form-actions">

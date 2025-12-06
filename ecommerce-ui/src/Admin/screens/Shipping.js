@@ -1,50 +1,99 @@
-import React, { useState } from "react";
-import { FaStar, FaEllipsisV, FaPlus } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
 import GridViewIcon from '@mui/icons-material/GridView';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
-
 import "../css/Shipping.css";
 
 const tabs = ["Shipping", "Marketplace", "Payments", "Accounting", "CRM"];
-
-const integrationsData = [
-  { name: "Fastway", logo: "http://www.fastway.in/assets/img/logo.png" },
-  { name: "FedEx", logo: "https://www.pngmart.com/files/15/Fedex-Logo-Transparent-PNG.png" },
-  { name: "FedEx Smart Post", logo: "https://logowik.com/content/uploads/images/fedex-smart-post8562.logowik.com.webp" },
-  { name: "DPD UK", logo: "https://pretenzijos.dpd.lt/assets/images/logo_redgrad_rgb.png" },
-  { name: "OnTrac", logo: "https://tse2.mm.bing.net/th/id/OIP.WTdFgsDpog94rV-G7j0ScgHaC9?pid=Api&P=0&h=180" },
-  { name: "GCO", logo: "https://avatars.githubusercontent.com/u/30686998?s=280&v=4" },
-  { name: "IMEX", logo: "https://tse2.mm.bing.net/th/id/OIP.qHkYYZesT49L-4dRG3ASLAAAAA?pid=Api&P=0&h=180" },
-  { name: "Interlink Express", logo: "https://www.whichfranchise.com/com_images/interlink_express-logo.jpg" },
-  { name: "LaserShip", logo: "https://logodix.com/logo/1990864.png" },
-  { name: "LSO", logo: "https://cdn.prod.website-files.com/64700b7f349828a5b8dc81ab/663ea09915c985b5ef3f1602_img-carriers-squares1-lso.svg" },
-];
 
 export default function Shipping() {
   const [activeTab, setActiveTab] = useState("Shipping");
   const [viewMode, setViewMode] = useState('grid');
   const [showModal, setShowModal] = useState(false);
   const [newCarrier, setNewCarrier] = useState({ name: '', logo: '' });
-  const [carriersList, setCarriersList] = useState(integrationsData);
+  const [logoFile, setLogoFile] = useState(null);
+  const [carriersList, setCarriersList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  const fetchCarriers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:8080/api/shipping-carriers');
+      if (response.ok) {
+        const data = await response.json();
+        setCarriersList(data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCarriers();
+  }, []);
 
   const totalPages = Math.ceil(carriersList.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentData = carriersList.slice(startIndex, startIndex + itemsPerPage);
 
   const handleAddCarrier = () => {
+    setNewCarrier({ name: '', logo: '' });
+    setLogoFile(null);
     setShowModal(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setLogoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewCarrier({...newCarrier, logo: reader.result});
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (newCarrier.name && newCarrier.logo) {
-      setCarriersList([...carriersList, newCarrier]);
-      setNewCarrier({ name: '', logo: '' });
-      setShowModal(false);
+    try {
+      if (newCarrier.name && newCarrier.logo) {
+        const response = await fetch('http://localhost:8080/api/shipping-carriers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newCarrier)
+        });
+        
+        if (response.ok) {
+          alert('Shipping carrier added successfully!');
+          await fetchCarriers();
+          setNewCarrier({ name: '', logo: '' });
+          setShowModal(false);
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error: ' + error.message);
+    }
+  };
+
+  const deleteCarrier = async (id) => {
+    if (window.confirm('Delete this carrier?')) {
+      try {
+        await fetch(`http://localhost:8080/api/shipping-carriers/${id}`, {
+          method: 'DELETE'
+        });
+        alert('Shipping carrier deleted successfully!');
+        await fetchCarriers();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
+      }
     }
   };
 
@@ -54,6 +103,8 @@ export default function Shipping() {
         <div className="integrations-header">
           <h2>Integrations</h2>
         </div>
+        
+        {loading && <div style={{padding: '20px', textAlign: 'center'}}>Loading carriers...</div>}
         
         <div className="filter-section">
           <div className="search-container">
@@ -86,82 +137,83 @@ export default function Shipping() {
           </div>
         </div>
 
-      <div className="tabs-row">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            className={`tab-btn ${activeTab === tab ? "active" : ""}`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-
-
-      {viewMode === 'grid' ? (
-        <div className="integration-grid">
-          {currentData.map((item, index) => (
-            <div className="integration-card" key={index}>
-              <div className="card-header">
-                <span className="star">★</span>
-                <span className="menu">⋮</span>
-              </div>
-              <img src={item.logo} alt={item.name} className="integration-logo" />
-              <h3>{item.name}</h3>
-              <button className="setup-btn">Setup Now</button>
-            </div>
+        <div className="tabs-row">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              className={`tab-btn ${activeTab === tab ? "active" : ""}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
           ))}
         </div>
-      ) : (
-        <div className="integration-list">
-          <table className="list-table">
-            <thead>
-              <tr>
-                <th>Logo</th>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentData.map((item, index) => (
-                <tr key={index}>
-                  <td><img src={item.logo} alt={item.name} className="list-logo" /></td>
-                  <td>{item.name}</td>
-                  <td><span className="status-badge">Not Connected</span></td>
-                  <td><button className="setup-btn-small">Setup</button></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
 
-      <div className="pagination">
-        <button 
-          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-        >
-          «
-        </button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+        {viewMode === 'grid' ? (
+          <div className="integration-grid">
+            {currentData.map((item) => (
+              <div className="integration-card" key={item.id}>
+                <div className="card-header">
+                  <span className="star">★</span>
+                  <span className="menu" onClick={() => deleteCarrier(item.id)} style={{cursor: 'pointer'}}>×</span>
+                </div>
+                <img src={item.logo} alt={item.name} className="integration-logo" />
+                <h3>{item.name}</h3>
+                <button className="setup-btn">Setup Now</button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="integration-list">
+            <table className="list-table">
+              <thead>
+                <tr>
+                  <th>Logo</th>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentData.map((item) => (
+                  <tr key={item.id}>
+                    <td><img src={item.logo} alt={item.name} className="list-logo" /></td>
+                    <td>{item.name}</td>
+                    <td><span className="status-badge">{item.status || 'Not Connected'}</span></td>
+                    <td>
+                      <button className="setup-btn-small">Setup</button>
+                      <button onClick={() => deleteCarrier(item.id)} style={{marginLeft: '10px', color: 'red'}}>Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <div className="pagination">
           <button 
-            key={page}
-            className={currentPage === page ? "active" : ""}
-            onClick={() => setCurrentPage(page)}
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
           >
-            {page}
+            «
           </button>
-        ))}
-        <button 
-          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-        >
-          »
-        </button>
-      </div>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            <button 
+              key={page}
+              className={currentPage === page ? "active" : ""}
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </button>
+          ))}
+          <button 
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+          >
+            »
+          </button>
+        </div>
       </div>
 
       {showModal && (
@@ -188,33 +240,24 @@ export default function Shipping() {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Logo</label>
-                  <div className="file-input-wrapper">
-                    <input
-                      type="file"
-                      id="logo-file"
-                      accept="image/*"
-                      style={{display: 'none'}}
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onload = (e) => setNewCarrier({...newCarrier, logo: e.target.result});
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                    />
-                    <button
-                      type="button"
-                      className="file-choose-btn-plain"
-                      onClick={() => document.getElementById('logo-file').click()}
-                    >
-                      Choose File
-                    </button>
-                    <span className="file-status">
-                      {newCarrier.logo ? 'File selected' : 'No file chosen'}
-                    </span>
-                  </div>
+                  <label>Logo *</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    style={{marginBottom: '10px'}}
+                  />
+                  <input
+                    type="text"
+                    name="logo"
+                    value={newCarrier.logo}
+                    onChange={(e) => setNewCarrier({...newCarrier, logo: e.target.value})}
+                    placeholder="Or enter logo URL"
+                    required={!newCarrier.logo}
+                  />
+                  {newCarrier.logo && (
+                    <img src={newCarrier.logo} alt="Preview" style={{width: '100px', marginTop: '10px', border: '1px solid #ddd', padding: '5px'}} />
+                  )}
                 </div>
 
                 <div className="form-actions">

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import * as XLSX from 'xlsx';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import GridViewIcon from '@mui/icons-material/GridView';
@@ -7,21 +7,9 @@ import '../css/SuppliersPage.css';
 import '../css/Packages.css';
 import AddOutgoingProductModal from './AddOutgoingProductModal';
 
-const initialOutgoingProducts = [
-  { id: 1, productName: "Acer Predator Triton 500", customer: "John Graham", quantity: 2, unitPrice: 1299.99, totalPrice: 2599.98, date: "2024-01-25", status: "shipped" },
-  { id: 2, productName: "iPhone 13 Pro", customer: "Alice Johnson", quantity: 1, unitPrice: 999.99, totalPrice: 999.99, date: "2024-01-24", status: "pending" },
-  { id: 3, productName: "Dell XPS 13", customer: "Bob Smith", quantity: 3, unitPrice: 1199.99, totalPrice: 3599.97, date: "2024-01-23", status: "delivered" },
-  { id: 4, productName: "Samsung Galaxy S22", customer: "Christine Moore", quantity: 1, unitPrice: 799.99, totalPrice: 799.99, date: "2024-01-22", status: "cancelled" },
-  { id: 5, productName: "MacBook Pro M2", customer: "David Wilson", quantity: 1, unitPrice: 2499.99, totalPrice: 2499.99, date: "2024-01-21", status: "shipped" },
-  { id: 6, productName: "iPad Air", customer: "Sarah Davis", quantity: 2, unitPrice: 599.99, totalPrice: 1199.98, date: "2024-01-20", status: "pending" },
-  { id: 7, productName: "Sony WH-1000XM4", customer: "Mike Brown", quantity: 1, unitPrice: 349.99, totalPrice: 349.99, date: "2024-01-19", status: "delivered" },
-  { id: 8, productName: "Nintendo Switch", customer: "Emma Taylor", quantity: 1, unitPrice: 299.99, totalPrice: 299.99, date: "2024-01-18", status: "shipped" },
-  { id: 9, productName: "LG OLED TV 55", customer: "James Anderson", quantity: 1, unitPrice: 1799.99, totalPrice: 1799.99, date: "2024-01-17", status: "pending" },
-  { id: 10, productName: "Canon EOS R5", customer: "Lisa Martinez", quantity: 1, unitPrice: 3899.99, totalPrice: 3899.99, date: "2024-01-16", status: "delivered" }
-];
-
 const OutgoingProducts = () => {
-  const [outgoingProducts, setOutgoingProducts] = useState(initialOutgoingProducts);
+  const [outgoingProducts, setOutgoingProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -36,6 +24,25 @@ const OutgoingProducts = () => {
     date: ""
   });
 
+  const fetchOutgoingProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:8080/api/outgoing-products');
+      if (response.ok) {
+        const data = await response.json();
+        setOutgoingProducts(data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOutgoingProducts();
+  }, []);
+
   const filtered = useMemo(() => {
     let result = outgoingProducts;
     if (search.trim()) {
@@ -48,24 +55,12 @@ const OutgoingProducts = () => {
     return result;
   }, [outgoingProducts, search]);
 
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * entriesPerPage;
     return filtered.slice(startIndex, startIndex + entriesPerPage);
   }, [filtered, currentPage, entriesPerPage]);
 
   const totalPages = Math.ceil(filtered.length / entriesPerPage);
-
-  const handlePageChange = (newPage) => {
-    if (newPage !== currentPage && newPage >= 1 && newPage <= totalPages) {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentPage(newPage);
-        setIsTransitioning(false);
-      }, 150);
-    }
-  };
 
   const handleAdd = () => {
     setEditingProduct(null);
@@ -85,44 +80,59 @@ const OutgoingProducts = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this outgoing product?")) {
-      setOutgoingProducts(prev => prev.filter(p => p.id !== id));
+      try {
+        const response = await fetch(`http://localhost:8080/api/outgoing-products/${id}`, {
+          method: 'DELETE'
+        });
+        if (response.ok) {
+          await fetchOutgoingProducts();
+          alert('Outgoing product deleted successfully!');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const productData = {
-      ...formData,
-      quantity: parseInt(formData.quantity),
-      unitPrice: parseFloat(formData.unitPrice),
-      totalPrice: parseInt(formData.quantity) * parseFloat(formData.unitPrice)
-    };
-
-    if (editingProduct) {
-      setOutgoingProducts(prev => prev.map(p => 
-        p.id === editingProduct.id ? { ...p, ...productData } : p
-      ));
-    } else {
-      const newProduct = {
-        id: Math.max(...outgoingProducts.map(p => p.id)) + 1,
-        ...productData,
-        status: "pending"
+    try {
+      const productData = {
+        productName: formData.productName,
+        customer: formData.customer,
+        quantity: parseInt(formData.quantity),
+        unitPrice: parseFloat(formData.unitPrice),
+        date: formData.date
       };
-      setOutgoingProducts(prev => {
-        const updatedProducts = [...prev, newProduct];
-        const newTotalPages = Math.ceil(updatedProducts.length / entriesPerPage);
-        
-        // Navigate to the page containing the new product
-        setTimeout(() => {
-          setCurrentPage(newTotalPages);
-        }, 100);
-        
-        return updatedProducts;
-      });
+
+      if (editingProduct) {
+        const response = await fetch(`http://localhost:8080/api/outgoing-products/${editingProduct.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(productData)
+        });
+        if (response.ok) {
+          await fetchOutgoingProducts();
+          setShowModal(false);
+          alert('Outgoing product updated successfully!');
+        }
+      } else {
+        const response = await fetch('http://localhost:8080/api/outgoing-products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(productData)
+        });
+        if (response.ok) {
+          await fetchOutgoingProducts();
+          setShowModal(false);
+          alert('Outgoing product added successfully!');
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
     }
-    setShowModal(false);
   };
 
   const exportToPDF = () => {
@@ -189,8 +199,8 @@ const OutgoingProducts = () => {
         <h2>Outgoing List</h2>
       </div>
 
-      {/* Filter Section */}
       <div className="content-wrapper">
+        {loading && <div style={{padding: '20px', textAlign: 'center'}}>Loading products...</div>}
         <div className="filter-section">
           <div className="search-container">
             <input
@@ -264,7 +274,7 @@ const OutgoingProducts = () => {
                     <td>{product.quantity}</td>
                     <td>{product.date}</td>
                     <td style={{textAlign: 'right', paddingRight: '20px'}}>
-                      <div className="action-buttons" style={{alignItems: 'flex-start', gap: '8px'}}>
+                      <div className="action-buttons">
                         <button className="action-btn edit-btn" onClick={() => handleEdit(product)} title="Edit">
                           <FaEdit />
                         </button>
@@ -308,7 +318,6 @@ const OutgoingProducts = () => {
         )}
       </div>
 
-      {/* Pagination */}
       <div className="pagination">
         <button 
           className="page-btn" 
@@ -335,46 +344,6 @@ const OutgoingProducts = () => {
         </button>
       </div>
 
-      {/* Export Invoice Section */}
-      <div className="import-section">
-        <h3>Export Invoice</h3>
-        <div className="table-container">
-          <table className="suppliers-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Products</th>
-                <th>Customer</th>
-                <th>Qty.</th>
-                <th>Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedData.map((product, index) => (
-                <tr key={product.id} className={index % 2 === 1 ? 'row-alternate' : ''}>
-                  <td>{product.id}</td>
-                  <td>{product.productName}</td>
-                  <td>{product.customer}</td>
-                  <td>{product.quantity}</td>
-                  <td>{product.date}</td>
-                  <td>
-                    <button
-                      className="btn btn-import"
-                      onClick={() => exportInvoice(product)}
-                    >
-                      Export Invoice
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    
-      {/* Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
