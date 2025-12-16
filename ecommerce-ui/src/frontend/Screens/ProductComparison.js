@@ -3,7 +3,7 @@ import "../css/ProductComparison.css"
 import Navbar from './navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
-import productsData from '../../data/products.json';
+import axios from 'axios';
 import {
     FaMapMarkerAlt,
     FaPhoneAlt,
@@ -21,43 +21,60 @@ const ProductComparison = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { addToCart, getTotalItems } = useContext(CartContext);
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [comparisonData, setComparisonData] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
 
-    const selectedProductIds = location.state?.selectedProductIds || [];
+    const selectedProducts = location.state?.selectedProducts || [];
 
     useEffect(() => {
-        if (selectedProductIds.length > 0) {
-            const allProducts = [
-                ...productsData.beds,
-                ...productsData.chairs,
-                ...productsData.sofas
-            ];
-            
-            const selectedProducts = allProducts.filter(product => 
-                selectedProductIds.includes(product.id)
-            );
-            
-            setProducts(selectedProducts);
+        if (selectedProducts.length > 0) {
+            fetchComparison(selectedProducts.map(p => p.id));
         }
-        setLoading(false);
-    }, [selectedProductIds]);
+    }, []);
+
+    const fetchComparison = async (productIds) => {
+        try {
+            setLoading(true);
+            console.log('Sending product IDs:', productIds);
+            const response = await axios.post('http://localhost:8080/api/comparison/products', productIds);
+            console.log('Comparison response:', response.data);
+            setComparisonData(response.data);
+        } catch (error) {
+            console.error('Error fetching comparison:', error);
+            console.error('Error details:', error.response?.data);
+            // Fallback: create comparison data from selected products
+            const sortedProducts = [...selectedProducts].sort((a, b) => {
+                const priceA = parseFloat(a.price.replace('₹', ''));
+                const priceB = parseFloat(b.price.replace('₹', ''));
+                return priceB - priceA;
+            });
+            const mappedProducts = sortedProducts.map(p => ({
+                id: p.id,
+                name: p.name,
+                description: p.description || 'N/A',
+                price: parseFloat(p.price.replace('₹', '')),
+                availableQuantity: p.availableQuantity || 0,
+                status: p.status || 'ACTIVE'
+            }));
+            setComparisonData({
+                descendingOrder: mappedProducts,
+                summary: `Comparing ${mappedProducts.length} products (Offline mode)`
+            });
+            setShowToast(true);
+            setToastMessage('Using offline comparison');
+            setTimeout(() => setShowToast(false), 2000);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleAddToCart = (product) => {
-        const productWithImage = {
-            ...product,
-            image: require(`../images/${product.image}`)
-        };
-        
-        addToCart(productWithImage);
-        const totalItems = getTotalItems() + 1;
-        
+        addToCart(product);
         setShowToast(true);
-        setToastMessage(`🛒 ${totalItems} item added to cart! `);
+        setToastMessage(`🛒 ${product.name} added to cart!`);
         setTimeout(() => setShowToast(false), 2000);
-        
     };
 
     const comparisonFeatures = [
@@ -73,10 +90,6 @@ const ProductComparison = () => {
         'discount'
     ];
 
-    if (loading) {
-        return <div className="loading">Loading products...</div>;
-    }
-
     return (
         <div className="product-comparison">
             <Navbar />
@@ -89,39 +102,69 @@ const ProductComparison = () => {
                 </div>
             </div>
 
-            {products.length > 0 ? (
+            {loading ? (
+                <div style={{ padding: '100px', textAlign: 'center' }}>
+                    <h2>Loading comparison...</h2>
+                </div>
+            ) : comparisonData && comparisonData.descendingOrder.length > 0 ? (
                 <section className="comparison-table-section">
+                    <div style={{ textAlign: 'center', marginBottom: '20px', padding: '20px' }}>
+                        <h3 style={{ color: '#8B4513', marginBottom: '10px' }}>{comparisonData.summary}</h3>
+                        <p style={{ fontSize: '14px', color: '#666' }}>Products sorted by price (Highest to Lowest)</p>
+                    </div>
                     <div className="table-container">
                         <table className="comparison-table">
                             <thead>
                                 <tr>
                                     <th className="feature-header">Features</th>
-                                    {products.map((product) => (
+                                    {comparisonData.descendingOrder.map((product, index) => (
                                         <th key={product.id} className="product-header">
                                             <div className="product-header-content">
-                                                <img src={require(`../images/${product.image}`)} alt={product.name} className="header-image" />
+                                                <span style={{ fontSize: '12px', color: '#8B4513', fontWeight: 'bold' }}>#{index + 1}</span>
                                                 <h4>{product.name}</h4>
-                                                <p className="header-price">{product.price}</p>
-                                                <p>⭐ {product.rating}</p>
+                                                <p className="header-price">₹{product.price}</p>
+                                                <p style={{ fontSize: '12px' }}>Stock: {product.availableQuantity}</p>
                                             </div>
                                         </th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {comparisonFeatures.map((feature, index) => (
-                                    <tr key={feature} className={index % 2 === 0 ? 'even-row' : 'odd-row'}>
-                                        <td className="feature-name">{feature.charAt(0).toUpperCase() + feature.slice(1)}</td>
-                                        {products.map((product) => (
-                                            <td key={product.id} className="feature-value">
-                                                {product[feature] || 'N/A'}
-                                            </td>
-                                        ))}
-                                    </tr>
-                                ))}
+                                <tr className="even-row">
+                                    <td className="feature-name">Price</td>
+                                    {comparisonData.descendingOrder.map((product) => (
+                                        <td key={product.id} className="feature-value">
+                                            ₹{product.price}
+                                        </td>
+                                    ))}
+                                </tr>
+                                <tr className="odd-row">
+                                    <td className="feature-name">Description</td>
+                                    {comparisonData.descendingOrder.map((product) => (
+                                        <td key={product.id} className="feature-value">
+                                            {product.description || 'N/A'}
+                                        </td>
+                                    ))}
+                                </tr>
+                                <tr className="even-row">
+                                    <td className="feature-name">Available Quantity</td>
+                                    {comparisonData.descendingOrder.map((product) => (
+                                        <td key={product.id} className="feature-value">
+                                            {product.availableQuantity}
+                                        </td>
+                                    ))}
+                                </tr>
+                                <tr className="odd-row">
+                                    <td className="feature-name">Status</td>
+                                    {comparisonData.descendingOrder.map((product) => (
+                                        <td key={product.id} className="feature-value">
+                                            {product.status}
+                                        </td>
+                                    ))}
+                                </tr>
                                 <tr className="action-row">
                                     <td className="feature-name">Action</td>
-                                    {products.map((product) => (
+                                    {comparisonData.descendingOrder.map((product) => (
                                         <td key={product.id} className="feature-value">
                                             <button 
                                                 className="add-to-cart-table-btn"

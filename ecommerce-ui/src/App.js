@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './frontend/Screens/Home';
 import CartPage from './frontend/Screens/CartPage';
 import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
 import Contact from './frontend/Screens/Contact';
 import SingleProductPage from './frontend/Screens/SingleProductPage';
 import CartSlider from './components/CartSlider';
@@ -10,7 +11,9 @@ import Shop from './frontend/Screens/Shop';
 import Checkout from './frontend/Screens/Checkout';
 import ProductComparison from './frontend/Screens/ProductComparison';
 import CategoryPage from './frontend/Screens/CategoryPage';
+import SubCategoryPage from './frontend/Screens/SubCategoryPage';
 import AboutUs from './frontend/Screens/AboutUs';
+import Wishlist from './frontend/Screens/Wishlist';
 import MainAdmin from './Admin/screens/MainAdmin';
 import AdminHomeScreen from './Admin/screens/AdminHomeScreen';
 import ContactList from './Admin/screens/ContactList';
@@ -21,8 +24,9 @@ import ContactView from './Admin/screens/ContactView';
 
 function App() {
   return (
-    <CartProvider>
-      <Router>
+    <WishlistProvider>
+      <CartProvider>
+        <Router>
         <Routes>
           {/* Main Frontend Routes */}
           <Route path="/" element={<Home />} />
@@ -34,7 +38,9 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/product-comparison" element={<ProductComparison />} />
           <Route path="/category/:categoryName" element={<CategoryPage />} />
-          <Route path="/about" element={<AboutUs />} />
+          <Route path="/subcategories/:categoryId" element={<SubCategoryPage />} />
+          <Route path="/AboutUs" element={<AboutUs />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           {/* Admin Routes */}
             <Route path="/admin" element={<AdminHomeScreen />} />
           <Route path="/admin-dashboard" element={<MainAdmin />} />
@@ -46,8 +52,9 @@ function App() {
 
           
         </Routes>
-      </Router>
-    </CartProvider>
+        </Router>
+      </CartProvider>
+    </WishlistProvider>
   );
 }
 

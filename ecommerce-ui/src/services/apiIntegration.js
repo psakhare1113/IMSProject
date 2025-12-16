@@ -1,4 +1,4 @@
-// Example integration for your existing UI components
+  // Example integration for your existing UI components
 import { productAPI, customerAPI, orderAPI, categoryAPI, contactAPI } from '../api';
 
 // Product Management Integration

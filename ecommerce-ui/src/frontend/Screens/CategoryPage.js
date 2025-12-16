@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import productsData from '../../data/products.json';
 import Layout from './layout';
 import '../css/CategoryPage.css';
 import { CartContext } from '../../context/CartContext';
+import { productAPI, categoryAPI } from '../../api';
+import chair from '../images/singlechair.png';
 
 const CategoryPage = () => {
   const { categoryName } = useParams();
@@ -14,21 +15,51 @@ const CategoryPage = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showCheckboxes, setShowCheckboxes] = useState(false);
+  const [categoryData, setCategoryData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { addToCart, getTotalItems } = useContext(CartContext);
 
   useEffect(() => {
-    const categoryProducts = productsData[categoryName] || [];
-    setProducts(categoryProducts);
+    const fetchCategoryProducts = async () => {
+      try {
+        setLoading(true);
+        // categoryName is actually categoryId from URL
+        const response = await productAPI.getByCategory(categoryName);
+        
+        // Map products to frontend format
+        const mappedProducts = response.data.map(prod => ({
+          id: prod.id,
+          name: prod.name,
+          image: prod.imageUrl || chair,
+          price: `₹${prod.price}`,
+          mrp: `₹${(prod.price * 1.2).toFixed(0)}`,
+          discount: "20% OFF",
+          rating: 4.5,
+          description: prod.description,
+          material: "Wood",
+          dimensions: "Standard",
+          color: "Natural",
+          warranty: "1 Year",
+          delivery: "Free Delivery"
+        }));
+        setProducts(mappedProducts);
+        
+        // Fetch category details
+        const categoriesRes = await categoryAPI.getAll();
+        const category = categoriesRes.data.find(cat => cat.id === parseInt(categoryName));
+        setCategoryData(category);
+      } catch (error) {
+        console.error('Error fetching category products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategoryProducts();
   }, [categoryName]);
 
   const handleAddToCart = (product) => {
-    const productWithImage = {
-      ...product,
-      image: require(`../images/${product.image}`)
-    };
-    
-    addToCart(productWithImage);
+    addToCart(product);
     const totalItems = getTotalItems() + 1;
     
     setShowToast(true);
@@ -44,12 +75,7 @@ const CategoryPage = () => {
 
   const handleModalAddToCart = () => {
     if (selectedProduct) {
-      const productWithImage = {
-        ...selectedProduct,
-        image: require(`../images/${selectedProduct.image}`)
-      };
-      
-      addToCart(productWithImage);
+      addToCart(selectedProduct);
       setShowToast(true);
       setTimeout(() => setShowToast(false), 2000);
       setIsModalOpen(false);
@@ -83,8 +109,8 @@ const CategoryPage = () => {
           <button onClick={() => navigate(-1)} className="back-btn">
             Back
           </button>
-          <h1>{categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}</h1>
-          <p>{products.length} Products Found</p>
+          <h1>{categoryData ? categoryData.name : 'Category'}</h1>
+          <p>{loading ? 'Loading...' : `${products.length} Products Found`}</p>
           
           <button 
             className="compare-btn" 
@@ -113,7 +139,11 @@ const CategoryPage = () => {
                 </div>
               )}
               <div className="product-image">
-                <img src={require(`../images/${product.image}`)} alt={product.name} />
+                <img 
+                  src={typeof product.image === 'string' && product.image.startsWith('http') ? product.image : chair} 
+                  alt={product.name}
+                  onError={(e) => { e.target.src = chair; }}
+                />
                 <div className="product-overlay">
                   <button 
                     className="add-to-cart"
@@ -157,7 +187,11 @@ const CategoryPage = () => {
               </span>
               <div className="modal-body">
                 <div className="modal-image">
-                  <img src={require(`../images/${selectedProduct.image}`)} alt={selectedProduct.name} />
+                  <img 
+                    src={typeof selectedProduct.image === 'string' && selectedProduct.image.startsWith('http') ? selectedProduct.image : chair} 
+                    alt={selectedProduct.name}
+                    onError={(e) => { e.target.src = chair; }}
+                  />
                 </div>
                 <div className="modal-details">
                   <h3>{selectedProduct.name}</h3>

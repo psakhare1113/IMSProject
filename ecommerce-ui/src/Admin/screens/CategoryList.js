@@ -40,20 +40,21 @@ export default function CategoryList() {
         });
         
         if (response.ok) {
-          // Remove from local state immediately
           if (viewType === 'categories') {
             setCategories(prev => prev.filter(cat => cat.id !== id));
           } else {
             setSubCategories(prev => prev.filter(sub => sub.id !== id));
           }
           alert(`${itemType.charAt(0).toUpperCase() + itemType.slice(1)} deleted successfully!`);
+        } else if (response.status === 500) {
+          alert(`Cannot delete this ${itemType}. It may have products or subcategories associated with it. Please remove them first.`);
         } else {
           const errorText = await response.text();
           alert(`Failed to delete ${itemType}: ${errorText}`);
         }
       } catch (error) {
         console.error(`Error deleting ${itemType}:`, error);
-        alert(`Error deleting ${itemType}`);
+        alert(`Cannot delete this ${itemType}. Please remove all associated products and subcategories first.`);
       }
     }
   };
@@ -356,7 +357,10 @@ export default function CategoryList() {
                         <div className="action-buttons">
                           <button
                             className="action-btn edit-btn"
-                            onClick={() => handleEdit(item)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(item);
+                            }}
                             title="Edit"
                           >
                             <FaEdit />
@@ -364,7 +368,10 @@ export default function CategoryList() {
                           <button
                             className="action-btn delete-btn"
                             title="Delete"
-                            onClick={() => deleteCategory(item.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteCategory(item.id);
+                            }}
                           >
                             <FaTrashAlt />
                           </button>
@@ -385,7 +392,10 @@ export default function CategoryList() {
                       <div className="card-actions">
                         <button
                           className="action-btn edit-btn"
-                          onClick={() => handleEdit(item)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(item);
+                          }}
                           title="Edit"
                         >
                           <FaEdit />
@@ -393,7 +403,10 @@ export default function CategoryList() {
                         <button
                           className="action-btn delete-btn"
                           title="Delete"
-                          onClick={() => deleteCategory(item.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteCategory(item.id);
+                          }}
                         >
                           <FaTrashAlt />
                         </button>

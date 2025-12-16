@@ -2,6 +2,8 @@ import React, { useState, useContext, useEffect } from "react";
 import "../css/frontendHome.css";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import SignInModal from "../../components/SignInModal";
 
 import Layout from "./layout";
 import { CartContext } from "../../context/CartContext";
@@ -32,7 +34,7 @@ import {
 } from "react-icons/fa";
 
 // At the top of your file, add:
-import categoriesData from '../../data/categories.json';
+import { categoryAPI, productAPI } from '../../api';
 
 
 const products = [
@@ -114,16 +116,15 @@ function App() {
     navigate(`/product/${productId}`);
   };
 
-  // Modal states
- // Modal states
- const [isModalOpen, setIsModalOpen] = useState(false);
- const [selectedProduct, setSelectedProduct] = useState(null);
- const [showToast, setShowToast] = useState(false);
- const [toastMessage, setToastMessage] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   // When Add to Cart clicked
   const handleOpenModal = (e, product) => {
     e.stopPropagation();
+    console.log('Selected Product:', product);
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
@@ -148,6 +149,22 @@ function App() {
 
   const [slideIndex, setSlideIndex] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [wishlist, setWishlist] = useState([]);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const toggleWishlist = (e, productId) => {
+    e.stopPropagation();
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
+    setWishlist(prev => 
+      prev.includes(productId) 
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
+  };
 
   const slides = [
     { img: slide1, title: "First Slide", desc: "Some description for first slide." },
@@ -171,7 +188,145 @@ function App() {
   }, [slides.length]);
 
 
-const [categories] = useState(categoriesData);
+const [categories, setCategories] = useState([]);
+  const [dbProducts, setDbProducts] = useState([]);
+  const [showAllProducts, setShowAllProducts] = useState(false);
+  const [showAllCategories, setShowAllCategories] = useState(false);
+
+  // Fetch categories and products from backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoriesRes, productsRes] = await Promise.all([
+          categoryAPI.getAll(),
+          productAPI.getAll()
+        ]);
+        
+        // Category image mapping
+        const categoryImageMap = {
+          'beds': 'beds.png',
+          'chairs': 'chairs.png',
+          'sofas': 'sofas.png',
+          'diningtables': 'dining.png',
+          'tv&mediaunits': 'tvmedia.png',
+          'wardrobes': 'wardoes.png',
+          'dressingtables': 'dressingtable.png',
+          'shoeracks': 'shoeeracks.png',
+          'studytables': 'studytable.png',
+          'bookshelves': 'books.png',
+          'sidetables': 'slidetable.png',
+          'chestofdrawers': 'drawers.png',
+          'livingroom': 'livingroom.png',
+          'bedroom': 'bedroom.png',
+          'diningroom': 'diningroom.png',
+          'studyroom': 'studyroom.png',
+          'office': 'office.webp',
+          'kitchen': 'kitchen.png',
+          'appliances': 'Appliances.png',
+          'beauty': 'beauty.png',
+          'booksstationary': 'booksstationary.png',
+          'digitalproducts': 'digitalproducts.png',
+          'electronic': 'Electronic.png',
+          'electronics': 'Electronic.png',
+          'fashion': 'fashion.png',
+          'footwear': 'footwear.png',
+          'furniture': 'furniture.png',
+          'grocery': 'Grocery.png',
+          'homekitchen': 'homeKitchen.png',
+          'sportsfitness': 'sportsfitness.png',
+          'sports&fitness': 'sportsfitness.png',
+          'watches': 'watches.png',
+          'decor': 'decor.png',
+          'laptop': 'laptop.png',
+          'laptops': 'laptop.png'
+        };
+        
+        // Map categories to frontend format with safe image handling
+        const mappedCategories = categoriesRes.data.map(cat => {
+          const imageName = cat.name.toLowerCase().replace(/\s+/g, '').replace(/&/g, '');
+          const imageFile = categoryImageMap[imageName] || 'beds.png';
+          let categoryImage;
+          try {
+            categoryImage = require(`../images/${imageFile}`);
+          } catch (e) {
+            categoryImage = require('../images/beds.png');
+          }
+          return {
+            id: cat.id,
+            name: cat.name,
+            image: categoryImage,
+            link: `/category/${cat.id}`
+          };
+        });
+        setCategories(mappedCategories);
+        
+        // Product name to image mapping (order matters - more specific first)
+        const productImageMap = {
+          'king size bed': 'bed1.png',
+          'queen size bed': 'bed2.png',
+          'single bed': 'bed3.png',
+          'double bed': 'bed4.png',
+          'gaming laptop': 'laptop.png',
+          'asus laptop': 'asus.png',
+          'smart tv': 'Electronic.png',
+          'ladies shoes': 'footwear1.png',
+          'sandals': 'footwear1.png',
+          'shoes': 'footwear1.png',
+          'laptop': 'laptop.png',
+          'asus': 'asus.png',
+          'bed': 'bed1.png',
+          'tv': 'Electronic.png',
+          'television': 'Electronic.png',
+          'chair': 'chairs.png',
+          'sofa': 'sofas.png',
+          'table': 'centretable.png'
+        };
+        
+        // Map products to frontend format with category name
+        const mappedProducts = productsRes.data.map(prod => {
+          const category = categoriesRes.data.find(cat => cat.id === prod.selectedCategoryId);
+          
+          // Find matching image based on product name
+          let productImage = require('../images/bed1.png');
+          const productNameLower = prod.name.toLowerCase();
+          
+          for (const [key, imageName] of Object.entries(productImageMap)) {
+            if (productNameLower.includes(key)) {
+              try {
+                productImage = require(`../images/${imageName}`);
+                break;
+              } catch (e) {
+                console.log('Image not found:', imageName);
+              }
+            }
+          }
+          
+          return {
+            id: prod.id,
+            name: prod.name,
+            image: productImage,
+            price: `₹${prod.price}`,
+            mrp: prod.mrp ? `₹${prod.mrp}` : null,
+            discount: prod.discount || null,
+            color: prod.color || null,
+            delivery: prod.delivery || null,
+            rating: 4.5,
+            description: prod.description || 'No description available',
+            material: prod.material || null,
+            dimensions: prod.dimensions || null,
+            stock: prod.availableQuantity > 0 ? "Available" : "Out of Stock",
+            warranty: prod.warranty || null,
+            categoryId: prod.selectedCategoryId,
+            categoryName: prod.selectedCategoryName || category?.name || 'Uncategorized'
+          };
+        });
+        setDbProducts(mappedProducts);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
 
 
@@ -222,14 +377,34 @@ const [categories] = useState(categoriesData);
     <div className="frontend-categories-section">
       <h1>Explore Our Furniture Range</h1>
       <div className="frontend-category-container">
-        {categories.map((category) => (
-          <div className="frontend-category-card" key={category.id}>
-            <a href={category.link}>
-              <img src={require(`../images/${category.image.split('/').pop()}`)} alt={category.name} />
-            </a>
+        {categories.slice(0, showAllCategories ? undefined : 12).map((category) => (
+          <div 
+            className="frontend-category-card" 
+            key={category.id}
+            onClick={() => navigate(`/subcategories/${category.id}`)}
+            style={{ cursor: 'pointer' }}
+          >
+            <img src={category.image} alt={category.name} />
             <p>{category.name}</p>
           </div>
         ))}
+      </div>
+      <div style={{ textAlign: 'center', marginTop: '30px' }}>
+        <button 
+          onClick={() => setShowAllCategories(!showAllCategories)}
+          style={{
+            padding: '12px 30px',
+            backgroundColor: '#8B4513',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold'
+          }}
+        >
+          {showAllCategories ? 'Hide All' : 'View All'}
+        </button>
       </div>
     </div>
 
@@ -322,37 +497,74 @@ const [categories] = useState(categoriesData);
           </div>
         </div> */}
 
+
+
         <div className="frontend-product-section">
-          <h1>Discover Our Products</h1>
+          <h1>Featured Products</h1>
           <div className="frontend-card-container">
-            {products.map((product) => (
+            {(dbProducts.length > 0 ? dbProducts : products)
+              .slice(0, showAllProducts ? undefined : 4)
+              .map((product) => (
               <div
                 className="frontend-card"
                 key={product.id}
                 onClick={() => handleProductClick(product.id)}
                 style={{ cursor: "pointer" }}
               >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="frontend-product-image"
-                />
+                <div className="frontend-image-container">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="frontend-product-image"
+                  />
+                  <div className="frontend-wishlist-icon" onClick={(e) => toggleWishlist(e, product.id)}>
+                    {wishlist.includes(product.id) ? <FaHeart /> : <FaRegHeart />}
+                  </div>
+                </div>
                 <div className="frontend-card-content">
                   <h3>{product.name}</h3>
                   <p>Price: {product.price}</p>
                   <p>Rating: ⭐ {product.rating}</p>
                   <br></br>
-                  <button
-                    className="frontend-add-to-cart-btn"
-                    onClick={(e) => {
-                      handleOpenModal(e, product);
-                    }}
-                  >
-                    🛒 Add to Cart
-                  </button>
+                  <div className="frontend-button-group">
+                    <button
+                      className="frontend-buy-now-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/product/${product.id}`);
+                      }}
+                    >
+                      Buy Now
+                    </button>
+                    <button
+                      className="frontend-add-to-cart-btn"
+                      onClick={(e) => {
+                        handleOpenModal(e, product);
+                      }}
+                    >
+                      🛒 Add to Cart
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '30px' }}>
+            <button 
+              onClick={() => navigate('/shop')}
+              style={{
+                padding: '12px 30px',
+                backgroundColor: '#8B4513',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: 'bold'
+              }}
+            >
+              View More
+            </button>
           </div>
         </div>
 
@@ -373,39 +585,53 @@ const [categories] = useState(categoriesData);
               <div className="frontend-right-side">
                 <h3>{selectedProduct.name}</h3>
                 <p className="frontend-price">
-                  <strong>Price:</strong>7 {selectedProduct.price}
+                  <strong>Price:</strong> {selectedProduct.price}
                 </p>
-                <p>
-                  <strong>MRP:</strong> {selectedProduct.mrp}
-                </p>
-                <p>
-                  <strong>Discount:</strong> {selectedProduct.discount}
-                </p>
-                <p>
-                  <strong>Color:</strong> {selectedProduct.color}
-                </p>
+                {selectedProduct.mrp && (
+                  <p>
+                    <strong>MRP:</strong> {selectedProduct.mrp}
+                  </p>
+                )}
+                {selectedProduct.discount && (
+                  <p>
+                    <strong>Discount:</strong> {selectedProduct.discount}
+                  </p>
+                )}
+                {selectedProduct.color && (
+                  <p>
+                    <strong>Color:</strong> {selectedProduct.color}
+                  </p>
+                )}
                 <hr></hr>
-                <p>
-                  <strong>Delivery:</strong> {selectedProduct.delivery}
-                </p>
+                {selectedProduct.delivery && (
+                  <p>
+                    <strong>Delivery:</strong> {selectedProduct.delivery}
+                  </p>
+                )}
                 <p>
                   <strong>Rating:</strong> ⭐ {selectedProduct.rating}
                 </p>
                 <p>
                   <strong>Description:</strong> {selectedProduct.description}
                 </p>
-                <p>
-                  <strong>Material:</strong> {selectedProduct.material}
-                </p>
-                <p>
-                  <strong>Dimensions:</strong> {selectedProduct.dimensions}
-                </p>
+                {selectedProduct.material && (
+                  <p>
+                    <strong>Material:</strong> {selectedProduct.material}
+                  </p>
+                )}
+                {selectedProduct.dimensions && (
+                  <p>
+                    <strong>Dimensions:</strong> {selectedProduct.dimensions}
+                  </p>
+                )}
                 <p>
                   <strong>Stock Status:</strong> {selectedProduct.stock}
                 </p>
-                <p>
-                  <strong>Warranty:</strong> {selectedProduct.warranty}
-                </p>
+                {selectedProduct.warranty && (
+                  <p>
+                    <strong>Warranty:</strong> {selectedProduct.warranty}
+                  </p>
+                )}
                 <br />
                 <button
                   className="frontend-confirm-btn"
@@ -421,6 +647,8 @@ const [categories] = useState(categoriesData);
 
       {/* Replace the existing toast display with this */}
       {showToast && <div className="frontend-custom-toast">{toastMessage}</div>}
+      
+      {showLoginModal && <SignInModal onClose={() => setShowLoginModal(false)} />}
 
       {/* ✅ our product Section */}
       <div className="frontend-bycategories-section">

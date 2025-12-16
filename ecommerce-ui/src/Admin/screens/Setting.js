@@ -54,6 +54,20 @@ const Setting = () => {
           </div>
         </div>
 
+        {viewMode === 'grid' && (
+          <div className="tabs-row">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                className="tab-btn"
+                onClick={() => handleItemClick(item.path)}
+              >
+                {item.name}
+              </button>
+            ))}
+          </div>
+        )}
+
         {viewMode === 'list' ? (
           <div className="settings-list">
             {menuItems.map((item) => (

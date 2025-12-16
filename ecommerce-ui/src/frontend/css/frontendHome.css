@@ -397,6 +397,30 @@
   transform: translateY(-5px);
 }
 
+.frontend-image-container {
+  position: relative;
+  width: 100%;
+}
+
+.frontend-wishlist-icon {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  z-index: 10;
+  background: white;
+  border-radius: 50%;
+  padding: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.frontend-wishlist-icon:hover {
+  transform: scale(1.15);
+}
+
 .frontend-product-image {
   width: 300px;
   height: 200px;
@@ -414,18 +438,36 @@
   text-align: center;
 }
 
-.frontend-add-to-cart-btn {
+.frontend-button-group {
   display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.frontend-buy-now-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.frontend-buy-now-btn:hover {
+  background-color: #218838;
+}
+
+.frontend-add-to-cart-btn {
   background-color: #ff9f10;
   color: black;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   text-align: center;
+  transition: background-color 0.3s ease;
 }
 
 .frontend-add-to-cart-btn:hover {
@@ -1332,5 +1374,58 @@ footer .column a:hover {
   
   .frontend-container {
     max-width: 1400px;
+  }
+}
+
+/* Category Products Section */
+.frontend-category-products-section {
+  padding: 40px 20px;
+  background-color: #fff;
+}
+
+.frontend-category-section {
+  margin-bottom: 60px;
+}
+
+.frontend-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 0 20px;
+}
+
+.frontend-category-header h2 {
+  font-size: 32px;
+  color: #333;
+  margin: 0;
+}
+
+.frontend-view-all-btn {
+  background-color: #b88e2f;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.frontend-view-all-btn:hover {
+  background-color: #a07828;
+  transform: translateX(5px);
+}
+
+@media (max-width: 768px) {
+  .frontend-category-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .frontend-category-header h2 {
+    font-size: 24px;
   }
 }

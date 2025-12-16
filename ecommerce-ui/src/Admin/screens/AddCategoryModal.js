@@ -102,6 +102,53 @@ function AddCategoryModal({ onClose, onSubmit, editingCategory, formData, setFor
             />
             {errors.name && <span className="error-text">{errors.name}</span>}
           </div>
+
+          {!formData.parentId && (
+            <div className="form-group">
+              <label>
+                <PersonIcon className="field-icon" />
+                Category Image (Optional)
+              </label>
+              <select
+                name="imageUrl"
+                value={formData.imageUrl || ''}
+                onChange={handleChange}
+              >
+                <option value="">Select Image</option>
+                <option value="beds.png">Beds</option>
+                <option value="chairs.png">Chairs</option>
+                <option value="sofas.png">Sofas</option>
+                <option value="dining.png">Dining Tables</option>
+                <option value="tvmedia.png">TV & Media Units</option>
+                <option value="wardoes.png">Wardrobes</option>
+                <option value="dressingtable.png">Dressing Tables</option>
+                <option value="shoeeracks.png">Shoe Racks</option>
+                <option value="studytable.png">Study Tables</option>
+                <option value="books.png">Book Shelves</option>
+                <option value="slidetable.png">Side Tables</option>
+                <option value="drawers.png">Chest of Drawers</option>
+                <option value="livingroom.png">Living Room</option>
+                <option value="bedroom.png">Bedroom</option>
+                <option value="diningroom.png">Dining Room</option>
+                <option value="studyroom.png">Study Room</option>
+                <option value="office.webp">Office</option>
+                <option value="kitchen.png">Kitchen</option>
+                <option value="Appliances.png">Appliances</option>
+                <option value="beauty.png">Beauty</option>
+                <option value="booksstationary.png">Books & Stationary</option>
+                <option value="digitalproducts.png">Digital Products</option>
+                <option value="Electronic.png">Electronics</option>
+                <option value="fashion.png">Fashion</option>
+                <option value="footwear.png">Footwear</option>
+                <option value="furniture.png">Furniture</option>
+                <option value="Grocery.png">Grocery</option>
+                <option value="homeKitchen.png">Home & Kitchen</option>
+                <option value="sportsfitness.png">Sports & Fitness</option>
+                <option value="watches.png">Watches</option>
+                <option value="decor.png">Decor</option>
+              </select>
+            </div>
+          )}
         </div>
 
         <div className="form-actions">

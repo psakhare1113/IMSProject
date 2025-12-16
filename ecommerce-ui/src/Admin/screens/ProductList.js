@@ -20,29 +20,72 @@ export default function ProductList() {
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const generateSKU = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const prefix = 'PRD';
+    let sku = prefix + '-';
+    for (let i = 0; i < 8; i++) {
+      sku += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return sku;
+  };
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     quantity: "",
     categoryId: "",
-    sku: "",
+    sku: generateSKU(),
     status: "ACTIVE",
-    weightLbs: "",
-    weightOz: ""
+    material: "",
+    dimensions: "",
+    warranty: "",
+    color: "",
+    delivery: "",
+    mrp: "",
+    discount: ""
   });
 
   const deleteProduct = async (id) => {
+    const product = products.find(p => p.id === id);
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         const response = await fetch(`http://localhost:8080/api/products/${id}`, {
           method: 'DELETE'
         });
         if (response.ok) {
-          await fetchProducts(); // Refresh from database
+          setProducts(prev => prev.filter(p => p.id !== id));
+          alert('Product deleted successfully!');
+        } else if (response.status === 500) {
+          // Try soft delete instead
+          const softDeleteConfirm = window.confirm('This product has orders. Mark as INACTIVE instead?');
+          if (softDeleteConfirm) {
+            const updateResponse = await fetch(`http://localhost:8080/api/products/${id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                availableQuantity: product.quantity,
+                sku: product.sku || `SKU-${id}`,
+                status: 'INACTIVE',
+                categoryId: product.category?.id || null,
+                subCategoryId: null
+              })
+            });
+            if (updateResponse.ok) {
+              await fetchProducts();
+              alert('Product marked as INACTIVE');
+            }
+          }
+        } else {
+          alert('Failed to delete product');
         }
       } catch (error) {
         console.error('Error deleting product:', error);
+        alert('Error deleting product');
       }
     }
   };
@@ -55,10 +98,15 @@ export default function ProductList() {
       price: "",
       quantity: "",
       categoryId: "",
-      sku: "",
+      sku: generateSKU(),
       status: "ACTIVE",
-      weightLbs: "",
-      weightOz: ""
+      material: "",
+      dimensions: "",
+      warranty: "",
+      color: "",
+      delivery: "",
+      mrp: "",
+      discount: ""
     });
     setShowForm(true);
   };
@@ -71,10 +119,15 @@ export default function ProductList() {
       price: product.price.toString(),
       quantity: product.quantity.toString(),
       categoryId: product.category?.id || "",
-      sku: product.sku || "",
+      sku: product.sku || generateSKU(),
       status: product.status,
-      weightLbs: product.weightLbs?.toString() || "",
-      weightOz: product.weightOz?.toString() || ""
+      material: product.material || "",
+      dimensions: product.dimensions || "",
+      warranty: product.warranty || "",
+      color: product.color || "",
+      delivery: product.delivery || "",
+      mrp: product.mrp?.toString() || "",
+      discount: product.discount || ""
     });
     setShowForm(true);
   };
@@ -122,11 +175,22 @@ export default function ProductList() {
         description: formData.description,
         price: parseFloat(formData.price) || 0,
         availableQuantity: parseInt(formData.quantity) || 0,
-        sku: formData.sku || `SKU-${Date.now()}`,
+        sku: formData.sku || generateSKU(),
         status: formData.status || 'ACTIVE',
         categoryId: formData.categoryId ? parseInt(formData.categoryId) : null,
-        subCategoryId: null // You can add subcategory logic later if needed
+        subCategoryId: null,
+        material: formData.material,
+        dimensions: formData.dimensions,
+        warranty: formData.warranty,
+        color: formData.color,
+        delivery: formData.delivery,
+        mrp: formData.mrp ? parseFloat(formData.mrp) : null,
+        discount: formData.discount
       };
+      
+      if (formData.imageUrl) {
+        productData.imageUrl = formData.imageUrl;
+      }
 
       if (editingProduct) {
         const response = await fetch(`http://localhost:8080/api/products/${editingProduct.id}`, {
@@ -136,7 +200,12 @@ export default function ProductList() {
         });
         
         if (response.ok) {
-          await fetchProducts(); // Refresh from database
+          await fetchProducts();
+          alert('Product updated successfully!');
+          setShowForm(false);
+        } else {
+          const error = await response.text();
+          alert('Failed to update product: ' + error);
         }
       } else {
         const response = await fetch('http://localhost:8080/api/products', {
@@ -146,13 +215,17 @@ export default function ProductList() {
         });
         
         if (response.ok) {
-          await fetchProducts(); // Refresh from database
+          await fetchProducts();
+          alert('Product added successfully!');
+          setShowForm(false);
+        } else {
+          const error = await response.text();
+          alert('Failed to add product: ' + error);
         }
       }
-      setShowForm(false);
     } catch (error) {
       console.error('Error:', error);
-      alert('Error saving product');
+      alert('Error saving product: ' + error.message);
     }
   };
 
@@ -335,12 +408,12 @@ export default function ProductList() {
                     </td>
                     <td style={{textAlign: 'right', paddingRight: '20px'}}>
                       <div className="action-buttons">
-                        <button className="action-btn edit-btn" onClick={() => handleEdit(product)} title="Edit">
+                        <button className="action-btn edit-btn" onClick={(e) => { e.stopPropagation(); handleEdit(product); }} title="Edit">
                           <FaEdit />
                         </button>
                         <button 
                           className="action-btn delete-btn" 
-                          onClick={() => deleteProduct(product.id)}
+                          onClick={(e) => { e.stopPropagation(); deleteProduct(product.id); }}
                           title="Delete"
                         >
                           <FaTrashAlt />
@@ -360,12 +433,12 @@ export default function ProductList() {
                   <div className="card-header">
                     <h3>{product.name}</h3>
                     <div className="card-actions">
-                      <button className="action-btn edit-btn" onClick={() => handleEdit(product)} title="Edit">
+                      <button className="action-btn edit-btn" onClick={(e) => { e.stopPropagation(); handleEdit(product); }} title="Edit">
                         <FaEdit />
                       </button>
                       <button 
                         className="action-btn delete-btn" 
-                        onClick={() => deleteProduct(product.id)}
+                        onClick={(e) => { e.stopPropagation(); deleteProduct(product.id); }}
                         title="Delete"
                       >
                         <FaTrashAlt />

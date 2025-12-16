@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { productAPI, categoryAPI } from '../api';
 import '../css/SuppliersPage.css';
 
 const staticCategories = [
@@ -38,32 +39,55 @@ const staticProducts = [
   }
 ];
 
+const generateSKU = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const prefix = 'PRD';
+  let sku = prefix + '-';
+  for (let i = 0; i < 8; i++) {
+    sku += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return sku;
+};
+
 export default function ProductForm() {
   const [product, setProduct] = useState({ 
     name: "", description: "", price: "", quantity: "", imageUrl: "", category: null,
-    sku: "", weightLbs: "", weightOz: "", tags: "", handlingTime: "", asin: "", isbn: "",
+    sku: generateSKU(), weightLbs: "", weightOz: "", tags: "", handlingTime: "", asin: "", isbn: "",
     warehouseBin: "", countryOfManufacture: "", wholesalePrice: "", reorderPoint: "",
-    reorderQuantity: "", trackStock: true, inStock: "", lowStock: "", status: "ACTIVE"
+    reorderQuantity: "", trackStock: true, inStock: "", lowStock: "", status: "ACTIVE",
+    material: "", dimensions: "", warranty: "", color: "", delivery: "", mrp: "", discount: ""
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [categories] = useState(staticCategories);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
+    loadCategories();
     if (id) {
       loadProduct();
     }
   }, [id]);
 
-  const loadProduct = () => {
-    const foundProduct = staticProducts.find(p => p.id === parseInt(id));
-    if (foundProduct) {
-      setProduct(foundProduct);
-    } else {
+  const loadCategories = async () => {
+    try {
+      const response = await categoryAPI.getAll();
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Error loading categories:', error);
+      setCategories(staticCategories);
+    }
+  };
+
+  const loadProduct = async () => {
+    try {
+      const response = await productAPI.getById(id);
+      setProduct(response.data);
+    } catch (error) {
+      console.error('Error loading product:', error);
       setError('Product not found.');
     }
   };
@@ -87,36 +111,50 @@ export default function ProductForm() {
     return URL.createObjectURL(selectedFile);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     
-    setTimeout(() => {
+    try {
       let imageUrl = product.imageUrl;
       if (selectedFile) {
-        imageUrl = uploadImage();
+        imageUrl = URL.createObjectURL(selectedFile);
       }
       
       const productData = {
-        ...product,
+        name: product.name,
+        description: product.description,
         price: parseFloat(product.price) || 0,
-        quantity: parseInt(product.quantity) || 0,
-        weightLbs: parseFloat(product.weightLbs) || 0,
-        weightOz: parseFloat(product.weightOz) || 0,
-        wholesalePrice: parseFloat(product.wholesalePrice) || 0,
-        reorderPoint: parseInt(product.reorderPoint) || 0,
-        reorderQuantity: parseInt(product.reorderQuantity) || 0,
-        inStock: parseInt(product.inStock) || 0,
-        lowStock: parseInt(product.lowStock) || 0,
-        imageUrl: imageUrl
+        availableQuantity: parseInt(product.quantity) || 0,
+        sku: product.sku,
+        status: product.status,
+        categoryId: product.category?.id || null,
+        imageUrl: imageUrl,
+        material: product.material,
+        dimensions: product.dimensions,
+        warranty: product.warranty,
+        color: product.color,
+        delivery: product.delivery,
+        mrp: parseFloat(product.mrp) || 0,
+        discount: product.discount
       };
       
-      console.log(id ? 'Updating product:' : 'Creating product:', productData);
-      alert(id ? 'Product updated successfully!' : 'Product created successfully!');
-      setLoading(false);
+      if (id) {
+        await productAPI.update(id, productData);
+        alert('Product updated successfully!');
+      } else {
+        await productAPI.create(productData);
+        alert('Product created successfully with SKU: ' + product.sku);
+      }
+      
       navigate("/products");
-    }, 1000);
+    } catch (error) {
+      console.error('Error saving product:', error);
+      setError(error.response?.data?.message || 'Failed to save product. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading && id) {
@@ -142,41 +180,15 @@ export default function ProductForm() {
             style={{width: '100%'}}
           />
         </div>
-        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '20px'}}>
-          <input
-            type="text"
-            name="sku"
-            placeholder="SKU"
-            value={product.sku}
-            onChange={handleChange}
-            className="search-bar"
-          />
-          <input
-            type="number"
-            name="weightLbs"
-            placeholder="Weight (lbs)"
-            value={product.weightLbs}
-            onChange={handleChange}
-            className="search-bar"
-          />
-          <input
-            type="number"
-            name="weightOz"
-            placeholder="Weight (oz)"
-            value={product.weightOz}
-            onChange={handleChange}
-            className="search-bar"
-          />
-        </div>
+
         <div style={{marginBottom: '20px'}}>
-          <input
-            type="text"
+          <textarea
             name="description"
             placeholder="Description"
             value={product.description}
             onChange={handleChange}
             className="search-bar"
-            style={{width: '100%'}}
+            style={{width: '100%', minHeight: '80px', padding: '10px'}}
           />
         </div>
         <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px'}}>
@@ -193,6 +205,18 @@ export default function ProductForm() {
           />
           <input
             type="number"
+            name="mrp"
+            placeholder="MRP (Original Price)"
+            value={product.mrp}
+            onChange={handleChange}
+            min="0"
+            step="0.01"
+            className="search-bar"
+          />
+        </div>
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px'}}>
+          <input
+            type="number"
             name="quantity"
             placeholder="Quantity"
             value={product.quantity}
@@ -200,6 +224,61 @@ export default function ProductForm() {
             required
             min="0"
             className="search-bar"
+          />
+          <input
+            type="text"
+            name="discount"
+            placeholder="Discount (e.g., 20% OFF)"
+            value={product.discount}
+            onChange={handleChange}
+            className="search-bar"
+          />
+        </div>
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px'}}>
+          <input
+            type="text"
+            name="material"
+            placeholder="Material (e.g., Solid Wood)"
+            value={product.material}
+            onChange={handleChange}
+            className="search-bar"
+          />
+          <input
+            type="text"
+            name="dimensions"
+            placeholder="Dimensions (e.g., 120 x 60 x 45 cm)"
+            value={product.dimensions}
+            onChange={handleChange}
+            className="search-bar"
+          />
+        </div>
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px'}}>
+          <input
+            type="text"
+            name="color"
+            placeholder="Color"
+            value={product.color}
+            onChange={handleChange}
+            className="search-bar"
+          />
+          <input
+            type="text"
+            name="warranty"
+            placeholder="Warranty (e.g., 1 Year)"
+            value={product.warranty}
+            onChange={handleChange}
+            className="search-bar"
+          />
+        </div>
+        <div style={{marginBottom: '20px'}}>
+          <input
+            type="text"
+            name="delivery"
+            placeholder="Delivery Info (e.g., Free Delivery in 5-7 days)"
+            value={product.delivery}
+            onChange={handleChange}
+            className="search-bar"
+            style={{width: '100%'}}
           />
         </div>
         <div style={{marginBottom: '20px'}}>

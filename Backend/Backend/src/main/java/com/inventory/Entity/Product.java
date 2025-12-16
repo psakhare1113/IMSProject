@@ -27,6 +27,15 @@ public class Product {
 
     private int availableQuantity;
     private String status = "ACTIVE";
+    
+    private String material;
+    private String dimensions;
+    private String warranty;
+    private String color;
+    private String delivery;
+    private Double mrp;
+    private String discount;
+    private String imageUrl;
 
     @ManyToOne
     @JsonIgnore

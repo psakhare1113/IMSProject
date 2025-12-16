@@ -1,0 +1,33 @@
+
+[
+    {
+        "id": "68aa13b9299fbfac0c202610",
+        "name": "Laptop",
+        "description": "HP Pavilion",
+        "price": 55000
+    },
+    {
+        "id": "68aab680d7d0eea380d95b3f",
+        "name": "Laptop",
+        "description": "DELL  Vostro i3",
+        "price": 55000
+    },
+    {
+        "id": "68aab7cbd7d0eea380d95b40",
+        "name": "Mobile",
+        "description": "Oneplus nord ce 2",
+        "price": 30000
+    },
+    {
+        "id": "68ab2121afa21700ba62c26b",
+        "name": "Mobile Phone",
+        "description": "Samsung Galaxy S16",
+        "price": 30000
+    },
+    {
+        "id": "68ab250cafa21700ba62c26c",
+        "name": "Laptop",
+        "description": "Dell Vostro",
+        "price": 60000
+    }
+]

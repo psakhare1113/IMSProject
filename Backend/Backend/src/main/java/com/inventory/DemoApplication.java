@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 @ComponentScan(basePackages = "com.inventory")
-public class DemoApplication {
+public class    DemoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);

@@ -55,7 +55,15 @@ function AddProductModal({ onClose, onSubmit, editingProduct, formData, setFormD
   };
 
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
+    const file = e.target.files[0];
+    setSelectedFile(file);
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setFormData(prev => ({
+        ...prev,
+        imageUrl: imageUrl
+      }));
+    }
   };
 
   const validateForm = () => {
@@ -99,50 +107,6 @@ function AddProductModal({ onClose, onSubmit, editingProduct, formData, setFormD
               placeholder="Enter product name"
             />
             {errors.name && <span className="error-text">{errors.name}</span>}
-          </div>
-
-          <div className="form-group">
-            <label>
-              <EmailIcon className="field-icon" />
-              SKU
-            </label>
-            <input
-              type="text"
-              name="sku"
-              value={formData.sku}
-              onChange={handleChange}
-              placeholder="Enter SKU"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>
-              <PhoneIcon className="field-icon" />
-              Weight (lbs)
-            </label>
-            <input
-              type="number"
-              step="0.01"
-              name="weightLbs"
-              value={formData.weightLbs}
-              onChange={handleChange}
-              placeholder="Enter weight in lbs"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>
-              <PhoneIcon className="field-icon" />
-              Weight (oz)
-            </label>
-            <input
-              type="number"
-              step="0.01"
-              name="weightOz"
-              value={formData.weightOz}
-              onChange={handleChange}
-              placeholder="Enter weight in oz"
-            />
           </div>
 
           <div className="form-group">
@@ -198,21 +162,117 @@ function AddProductModal({ onClose, onSubmit, editingProduct, formData, setFormD
           <div className="form-group">
             <label>
               <LocationOnIcon className="field-icon" />
-              Category
+              Subcategory
             </label>
             <select
               name="categoryId"
               value={formData.categoryId || ''}
               onChange={handleChange}
             >
-              <option value="">Select category</option>
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name} (Main Category)</option>
-              ))}
+              <option value="">Select subcategory</option>
               {subCategories.map(subCat => (
-                <option key={`sub-${subCat.id}`} value={subCat.id}>{subCat.name} (Subcategory)</option>
+                <option key={subCat.id} value={subCat.id}>{subCat.name}</option>
               ))}
             </select>
+          </div>
+
+          <div className="form-group">
+            <label>
+              <PhoneIcon className="field-icon" />
+              MRP (Original Price)
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              name="mrp"
+              value={formData.mrp || ''}
+              onChange={handleChange}
+              placeholder="Enter MRP"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>
+              <PersonIcon className="field-icon" />
+              Discount
+            </label>
+            <input
+              type="text"
+              name="discount"
+              value={formData.discount || ''}
+              onChange={handleChange}
+              placeholder="e.g., 20% OFF"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>
+              <PersonIcon className="field-icon" />
+              Material
+            </label>
+            <input
+              type="text"
+              name="material"
+              value={formData.material || ''}
+              onChange={handleChange}
+              placeholder="e.g., Solid Wood"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>
+              <LocationOnIcon className="field-icon" />
+              Dimensions
+            </label>
+            <input
+              type="text"
+              name="dimensions"
+              value={formData.dimensions || ''}
+              onChange={handleChange}
+              placeholder="e.g., 120 x 60 x 45 cm"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>
+              <PersonIcon className="field-icon" />
+              Color
+            </label>
+            <input
+              type="text"
+              name="color"
+              value={formData.color || ''}
+              onChange={handleChange}
+              placeholder="Enter color"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>
+              <PhoneIcon className="field-icon" />
+              Warranty
+            </label>
+            <input
+              type="text"
+              name="warranty"
+              value={formData.warranty || ''}
+              onChange={handleChange}
+              placeholder="e.g., 1 Year"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>
+              <LocationOnIcon className="field-icon" />
+              Delivery Info
+            </label>
+            <input
+              type="text"
+              name="delivery"
+              value={formData.delivery || ''}
+              onChange={handleChange}
+              placeholder="e.g., Free Delivery in 5-7 days"
+            />
           </div>
         </div>
 

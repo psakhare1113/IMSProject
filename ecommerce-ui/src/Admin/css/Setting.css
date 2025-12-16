@@ -154,17 +154,20 @@
 
 .settings-container .settings-card {
   background: #fff;
-  padding: 30px 18px;
+  padding: 40px 20px;
   border-radius: 16px;
   box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  border: 1px solid transparent;
 }
 
 .settings-container .settings-card:hover {
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(184, 142, 47, 0.2);
+  transform: translateY(-5px);
+  border-color: #b88e2f;
 }
 
 .settings-container .settings-card h3 {
@@ -172,4 +175,47 @@
   margin: 0;
   font-weight: 600;
   color: #333;
+  transition: color 0.3s ease;
+}
+
+.settings-container .settings-card:hover h3 {
+  color: #b88e2f;
+}
+
+.settings-container .tabs-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.settings-container .tab-btn {
+  background: white;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #666;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.settings-container .tab-btn:hover {
+  background: #f5f5f5;
+  border-color: #b88e2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(184, 142, 47, 0.15);
+}
+
+.settings-container .tab-btn.active {
+  background: linear-gradient(135deg, #b88e2f 0%, #d4a843 100%);
+  color: white;
+  border-color: #b88e2f;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(184, 142, 47, 0.3);
 }
