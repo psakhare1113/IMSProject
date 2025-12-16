@@ -1,0 +1,38 @@
+# Git Commands to Push Code to GitHub
+
+# Step 1: Navigate to your project directory
+cd d:\IMSProject
+
+# Step 2: Initialize git if not already done (skip if already initialized)
+git init
+
+# Step 3: Add the remote repository (skip if already added)
+git remote add origin https://github.com/psakhare1113/IMSProject.git
+
+# Step 4: Check current branch
+git branch
+
+# Step 5: Add all changes
+git add .
+
+# Step 6: Commit changes with a message
+git commit -m "Updated Shop page with product filtering, hover effects, and category fixes"
+
+# Step 7: Pull latest changes from remote (if any)
+git pull origin main --rebase
+
+# If the above fails, try:
+# git pull origin master --rebase
+
+# Step 8: Push to GitHub
+git push -u origin main
+
+# If the above fails, try:
+# git push -u origin master
+
+# If you need to force push (use carefully):
+# git push -u origin main --force
+
+# Alternative: If you want to create a new branch
+# git checkout -b feature/shop-updates
+# git push -u origin feature/shop-updates
